@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Generated artefacts are reproducible from config + seed, so they are not tracked.
+data/generated/
+data/splits/
+outputs/figures/
+outputs/reports/
+outputs/baseline_logistic_regression/
+
+# DDXPlus release files are large and externally sourced; keep them out of the repo.
+data/raw/ddxplus/
+
+# The probability table and feature schema ARE tracked - they are the sourced inputs.
+!config/
+
+# Published evaluation artefacts ARE tracked.
+!results/
+!results/**

@@ -1,0 +1,171 @@
+item_id,condition,probability,tier,band,status,source,basis
+fever_current,malaria,0.85,guideline_ordinal,cardinal,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'cardinal' band.
+fever_over_3_days,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+chills_rigors,malaria,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'common' band.
+drenching_sweats,malaria,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'frequent' band.
+headache,malaria,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'common' band.
+body_aches,malaria,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'common' band.
+fatigue_weakness,malaria,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'common' band.
+cough,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+productive_cough,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+sore_throat,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+runny_or_blocked_nose,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+difficulty_breathing,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fast_breathing,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+chest_indrawing,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+noisy_breathing_wheeze,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+diarrhoea,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+diarrhoea_3plus_daily,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+blood_in_stool,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+vomiting,malaria,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'frequent' band.
+nausea,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+abdominal_pain,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+poor_appetite,malaria,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'frequent' band.
+sunken_eyes,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+slow_skin_pinch,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+excessive_thirst,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+lethargy_reduced_alertness,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),IMCI general danger sign; escalates to severe malaria.
+unable_to_drink_or_feed,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+painful_urination,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+frequent_urination,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+urinary_urgency,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+cloudy_or_foul_urine,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+flank_or_lower_back_pain,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+jaundice_yellow_eyes,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),Severe malaria sign; occasional in uncomplicated disease.
+skin_rash,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fever_current,typhoid,0.85,guideline_ordinal,cardinal,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'cardinal' band.
+fever_over_3_days,typhoid,0.714,published_frequency,,VERIFY,S001,Source reports fever >= 5 days; schema item is > 3 days. Not a clean match.
+chills_rigors,typhoid,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+drenching_sweats,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+headache,typhoid,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'common' band.
+body_aches,typhoid,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+fatigue_weakness,typhoid,0.81,published_frequency,,VERIFY,S001,Published frequency used as reported.
+cough,typhoid,0.524,published_frequency,,VERIFY,S001,Published frequency used as reported.
+productive_cough,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+sore_throat,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+runny_or_blocked_nose,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+difficulty_breathing,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fast_breathing,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+chest_indrawing,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+noisy_breathing_wheeze,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+diarrhoea,typhoid,0.286,published_frequency,,VERIFY,S001,Published frequency used as reported.
+diarrhoea_3plus_daily,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+blood_in_stool,typhoid,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'occasional' band.
+vomiting,typhoid,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'frequent' band.
+nausea,typhoid,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014),Guideline places this symptom in the 'frequent' band.
+abdominal_pain,typhoid,0.381,published_frequency,,VERIFY,S001,Published frequency used as reported.
+poor_appetite,typhoid,0.619,published_frequency,,VERIFY,S001,Published frequency used as reported.
+sunken_eyes,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+slow_skin_pinch,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+excessive_thirst,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+lethargy_reduced_alertness,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+unable_to_drink_or_feed,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+painful_urination,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+frequent_urination,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+urinary_urgency,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+cloudy_or_foul_urine,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+flank_or_lower_back_pain,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+jaundice_yellow_eyes,typhoid,0.22,published_frequency,,VERIFY,S002,"De Santis et al. (2017), jaundice in 22% of typhoid cases."
+skin_rash,typhoid,0.143,published_frequency,,VERIFY,S001,Published frequency used as reported.
+fever_current,urti_pneumonia,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'common' band.
+fever_over_3_days,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+chills_rigors,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+drenching_sweats,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+headache,urti_pneumonia,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'occasional' band.
+body_aches,urti_pneumonia,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'occasional' band.
+fatigue_weakness,urti_pneumonia,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'occasional' band.
+cough,urti_pneumonia,0.85,guideline_ordinal,cardinal,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'cardinal' band.
+productive_cough,urti_pneumonia,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'frequent' band.
+sore_throat,urti_pneumonia,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'common' band.
+runny_or_blocked_nose,urti_pneumonia,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'common' band.
+difficulty_breathing,urti_pneumonia,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'frequent' band.
+fast_breathing,urti_pneumonia,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",IMCI classification sign for pneumonia; age-banded threshold.
+chest_indrawing,urti_pneumonia,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",IMCI severe pneumonia sign; lower frequency in the merged label.
+noisy_breathing_wheeze,urti_pneumonia,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'frequent' band.
+diarrhoea,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+diarrhoea_3plus_daily,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+blood_in_stool,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+vomiting,urti_pneumonia,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'occasional' band.
+nausea,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+abdominal_pain,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+poor_appetite,urti_pneumonia,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), cough or difficult breathing assessment",Guideline places this symptom in the 'occasional' band.
+sunken_eyes,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+slow_skin_pinch,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+excessive_thirst,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+lethargy_reduced_alertness,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+unable_to_drink_or_feed,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+painful_urination,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+frequent_urination,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+urinary_urgency,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+cloudy_or_foul_urine,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+flank_or_lower_back_pain,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+jaundice_yellow_eyes,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+skin_rash,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fever_current,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+fever_over_3_days,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+chills_rigors,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+drenching_sweats,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+headache,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+body_aches,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fatigue_weakness,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+cough,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+productive_cough,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+sore_throat,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+runny_or_blocked_nose,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+difficulty_breathing,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fast_breathing,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+chest_indrawing,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+noisy_breathing_wheeze,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+diarrhoea,diarrhoeal,0.85,guideline_ordinal,cardinal,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'cardinal' band.
+diarrhoea_3plus_daily,diarrhoeal,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'common' band.
+blood_in_stool,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+vomiting,diarrhoeal,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'common' band.
+nausea,diarrhoeal,0.6,guideline_ordinal,common,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'common' band.
+abdominal_pain,diarrhoeal,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'frequent' band.
+poor_appetite,diarrhoeal,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'frequent' band.
+sunken_eyes,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+slow_skin_pinch,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+excessive_thirst,diarrhoeal,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'frequent' band.
+lethargy_reduced_alertness,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+unable_to_drink_or_feed,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+painful_urination,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+frequent_urination,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+urinary_urgency,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+cloudy_or_foul_urine,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+flank_or_lower_back_pain,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+jaundice_yellow_eyes,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+skin_rash,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fever_current,uti,0.2,guideline_ordinal,occasional,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'occasional' band.
+fever_over_3_days,uti,0.2,guideline_ordinal,occasional,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'occasional' band.
+chills_rigors,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+drenching_sweats,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+headache,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+body_aches,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fatigue_weakness,uti,0.2,guideline_ordinal,occasional,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'occasional' band.
+cough,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+productive_cough,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+sore_throat,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+runny_or_blocked_nose,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+difficulty_breathing,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+fast_breathing,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+chest_indrawing,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+noisy_breathing_wheeze,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+diarrhoea,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+diarrhoea_3plus_daily,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+blood_in_stool,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+vomiting,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+nausea,uti,0.2,guideline_ordinal,occasional,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'occasional' band.
+abdominal_pain,uti,0.4,guideline_ordinal,frequent,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'frequent' band.
+poor_appetite,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+sunken_eyes,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+slow_skin_pinch,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+excessive_thirst,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+lethargy_reduced_alertness,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+unable_to_drink_or_feed,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+painful_urination,uti,0.85,guideline_ordinal,cardinal,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'cardinal' band.
+frequent_urination,uti,0.6,guideline_ordinal,common,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'common' band.
+urinary_urgency,uti,0.6,guideline_ordinal,common,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'common' band.
+cloudy_or_foul_urine,uti,0.4,guideline_ordinal,frequent,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'frequent' band.
+flank_or_lower_back_pain,uti,0.2,guideline_ordinal,occasional,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'occasional' band.
+jaundice_yellow_eyes,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+skin_rash,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
