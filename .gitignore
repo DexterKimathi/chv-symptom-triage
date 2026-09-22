@@ -1,0 +1,21 @@
+# Environments and secrets
+.env
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Model artefacts over 50 MB are stored in the ML repo release, not here
+app/services/model/*.joblib
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
