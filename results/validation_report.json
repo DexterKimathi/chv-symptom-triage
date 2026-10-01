@@ -1,0 +1,291 @@
+{
+  "evaluation_partition": "validation",
+  "test_set_opened": false,
+  "selection_rule": "highest validation macro F1 among the trainable candidates",
+  "chosen_model": "Logistic Regression",
+  "config_hash": "e5a754c9a8edf02dd6f3aa39c686366adfaf8c3d201f0e5ecd3724ae66b9b178",
+  "settings": {
+    "logistic_regression": {
+      "solver": "lbfgs",
+      "C": 1.0,
+      "max_iter": 2000
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "min_samples_leaf": 1,
+      "n_jobs": -1
+    },
+    "xgboost": {
+      "n_estimators": 300,
+      "max_depth": 4,
+      "learning_rate": 0.1,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "objective": "multi:softprob",
+      "eval_metric": "mlogloss",
+      "n_jobs": -1
+    }
+  },
+  "results": [
+    {
+      "model": "Naive Bayes (table reference)",
+      "accuracy": 0.8533333333333334,
+      "macro_precision": 0.8541535466045314,
+      "macro_recall": 0.85339278631324,
+      "macro_f1": 0.8535285959648317,
+      "log_loss": 0.6905708443548191,
+      "brier": 0.23437441832071357,
+      "ece": 0.05760409110912046,
+      "per_class_recall": {
+        "malaria": 0.8165289256198347,
+        "typhoid": 0.782608695652174,
+        "urti_pneumonia": 0.9198664440734557,
+        "diarrhoeal": 0.86,
+        "uti": 0.8879598662207357
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false,
+      "confusion_matrix": [
+        [
+          494,
+          64,
+          22,
+          13,
+          12
+        ],
+        [
+          76,
+          468,
+          17,
+          22,
+          15
+        ],
+        [
+          20,
+          13,
+          551,
+          10,
+          5
+        ],
+        [
+          29,
+          23,
+          11,
+          516,
+          21
+        ],
+        [
+          15,
+          13,
+          19,
+          20,
+          531
+        ]
+      ]
+    },
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.8553333333333333,
+      "macro_precision": 0.8559181758943766,
+      "macro_recall": 0.8554436482220668,
+      "macro_f1": 0.8555960454663738,
+      "log_loss": 0.5052231531555895,
+      "brier": 0.23172642322051584,
+      "ece": 0.041951383735716025,
+      "per_class_recall": {
+        "malaria": 0.7950413223140496,
+        "typhoid": 0.8110367892976589,
+        "urti_pneumonia": 0.9215358931552587,
+        "diarrhoeal": 0.8683333333333333,
+        "uti": 0.8812709030100334
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false,
+      "confusion_matrix": [
+        [
+          481,
+          73,
+          19,
+          17,
+          15
+        ],
+        [
+          65,
+          485,
+          15,
+          18,
+          15
+        ],
+        [
+          18,
+          11,
+          552,
+          13,
+          5
+        ],
+        [
+          25,
+          26,
+          9,
+          521,
+          19
+        ],
+        [
+          15,
+          18,
+          15,
+          23,
+          527
+        ]
+      ]
+    },
+    {
+      "model": "Random Forest",
+      "accuracy": 0.8363333333333334,
+      "macro_precision": 0.8362899584867283,
+      "macro_recall": 0.8364387374543103,
+      "macro_f1": 0.8360572159360699,
+      "log_loss": 0.6394705643620584,
+      "brier": 0.2633793357089399,
+      "ece": 0.10069548817540482,
+      "per_class_recall": {
+        "malaria": 0.771900826446281,
+        "typhoid": 0.7625418060200669,
+        "urti_pneumonia": 0.9215358931552587,
+        "diarrhoeal": 0.8616666666666667,
+        "uti": 0.8645484949832776
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": false,
+      "separability_flag": false,
+      "confusion_matrix": [
+        [
+          467,
+          74,
+          26,
+          19,
+          19
+        ],
+        [
+          75,
+          456,
+          27,
+          25,
+          15
+        ],
+        [
+          22,
+          8,
+          552,
+          10,
+          7
+        ],
+        [
+          29,
+          24,
+          11,
+          517,
+          19
+        ],
+        [
+          14,
+          16,
+          25,
+          26,
+          517
+        ]
+      ]
+    },
+    {
+      "model": "XGBoost",
+      "accuracy": 0.8426666666666667,
+      "macro_precision": 0.8432168441193493,
+      "macro_recall": 0.8427673517334349,
+      "macro_f1": 0.8428859085470417,
+      "log_loss": 0.5057973861694336,
+      "brier": 0.23685716577371127,
+      "ece": 0.018029016226530054,
+      "per_class_recall": {
+        "malaria": 0.7867768595041322,
+        "typhoid": 0.7892976588628763,
+        "urti_pneumonia": 0.9081803005008348,
+        "diarrhoeal": 0.855,
+        "uti": 0.8745819397993311
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false,
+      "confusion_matrix": [
+        [
+          476,
+          74,
+          24,
+          18,
+          13
+        ],
+        [
+          67,
+          472,
+          21,
+          23,
+          15
+        ],
+        [
+          20,
+          14,
+          544,
+          16,
+          5
+        ],
+        [
+          27,
+          29,
+          10,
+          513,
+          21
+        ],
+        [
+          17,
+          16,
+          18,
+          24,
+          523
+        ]
+      ]
+    }
+  ]
+}
