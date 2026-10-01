@@ -26,6 +26,7 @@ slow_skin_pinch,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared
 excessive_thirst,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 lethargy_reduced_alertness,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),IMCI general danger sign; escalates to severe malaria.
 unable_to_drink_or_feed,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+convulsions,malaria,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014),"Cerebral malaria feature and IMCI general danger sign. The occasional band likely overstates its rate in uncomplicated malaria; recorded as an open item. In the deployed system a convulsion triggers urgent referral before the model runs, so this probability affects training only, not the safety rule."
 painful_urination,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 frequent_urination,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 urinary_urgency,malaria,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
@@ -60,6 +61,7 @@ slow_skin_pinch,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared
 excessive_thirst,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 lethargy_reduced_alertness,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 unable_to_drink_or_feed,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+convulsions,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 painful_urination,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 frequent_urination,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 urinary_urgency,typhoid,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
@@ -94,6 +96,7 @@ slow_skin_pinch,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,d
 excessive_thirst,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 lethargy_reduced_alertness,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 unable_to_drink_or_feed,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+convulsions,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 painful_urination,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 frequent_urination,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 urinary_urgency,urti_pneumonia,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
@@ -128,6 +131,7 @@ slow_skin_pinch,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,
 excessive_thirst,diarrhoeal,0.4,guideline_ordinal,frequent,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'frequent' band.
 lethargy_reduced_alertness,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
 unable_to_drink_or_feed,diarrhoeal,0.2,guideline_ordinal,occasional,SOURCED-DIRECTIONAL,"WHO IMCI chart booklet (2014), diarrhoea and dehydration classification",Guideline places this symptom in the 'occasional' band.
+convulsions,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 painful_urination,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 frequent_urination,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 urinary_urgency,diarrhoeal,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
@@ -162,6 +166,7 @@ slow_skin_pinch,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rul
 excessive_thirst,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 lethargy_reduced_alertness,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 unable_to_drink_or_feed,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
+convulsions,uti,0.03,background_rule,background,BACKGROUND-RULE,declared rule,Not characteristic of this condition; assigned the declared uniform background rate (see generator.yaml).
 painful_urination,uti,0.85,guideline_ordinal,cardinal,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'cardinal' band.
 frequent_urination,uti,0.6,guideline_ordinal,common,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'common' band.
 urinary_urgency,uti,0.6,guideline_ordinal,common,VERIFY,PENDING - no primary-care UTI symptom-frequency source secured yet,Guideline places this symptom in the 'common' band.

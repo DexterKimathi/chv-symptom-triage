@@ -27,8 +27,13 @@ malaria:
       - fever_over_3_days
       - lethargy_reduced_alertness
       - jaundice_yellow_eyes
+      - convulsions
   notes:
     jaundice_yellow_eyes: "Severe malaria sign; occasional in uncomplicated disease."
+    convulsions: "Cerebral malaria feature and IMCI general danger sign. The occasional band
+      likely overstates its rate in uncomplicated malaria; recorded as an open item. In the
+      deployed system a convulsion triggers urgent referral before the model runs, so this
+      probability affects training only, not the safety rule."
     lethargy_reduced_alertness: "IMCI general danger sign; escalates to severe malaria."
 
 typhoid:
