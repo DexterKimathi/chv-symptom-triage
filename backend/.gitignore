@@ -1,0 +1,21 @@
+# Environments and secrets
+.env
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local development database. Rebuild with: python -m scripts.seed --reset
+*.db
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

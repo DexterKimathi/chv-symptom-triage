@@ -1,0 +1,28 @@
+# Web
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+
+# Database
+sqlalchemy
+psycopg[binary]
+
+# Auth
+PyJWT
+bcrypt
+
+# Model serving. These are PINNED to the versions the model was trained with in the
+# ML repo. Unpickling a model under a different scikit-learn version can fail or, worse,
+# load and silently behave differently. Change them only together with a retrained model.
+scikit-learn==1.9.0
+numpy==2.5.3
+pandas==3.0.5
+scipy==1.18.1
+joblib==1.6.0
+xgboost==3.4.1
+
+# Tests
+pytest
+httpx
