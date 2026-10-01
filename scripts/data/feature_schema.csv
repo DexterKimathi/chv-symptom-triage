@@ -1,0 +1,38 @@
+item_id,category,data_type,is_danger_sign,chv_question,observable_rationale,relevant_conditions,ddxplus_equivalent,ddxplus_note
+fever_current,constitutional,binary,False,"Does the patient feel hot now, or report fever since yesterday?",Tactile fever and patient report; no thermometer required.,malaria|typhoid|urti_pneumonia|uti,E_91,Direct equivalent: fever felt or measured.
+fever_over_3_days,constitutional,binary,False,Has the fever lasted more than three days?,Recall question; no instrument.,typhoid|malaria,NONE,DDXPlus encodes fever presence but not duration as a binary item.
+chills_rigors,constitutional,binary,False,Has the patient had shaking chills or shivering?,Observed or reported.,malaria,E_94,Direct equivalent: chills or shivers.
+drenching_sweats,constitutional,binary,False,Has the patient had episodes of heavy sweating?,Reported.,malaria,E_50,Direct equivalent: significantly increased sweating.
+headache,constitutional,binary,False,Does the patient have a headache?,Reported symptom.,malaria|typhoid|urti_pneumonia,NONE,No headache symptom evidence exists in DDXPlus; E_25 records only family history of cluster headaches.
+body_aches,constitutional,binary,False,"Does the patient have widespread body, muscle or joint aches?",Reported symptom.,malaria|urti_pneumonia,E_144,Direct equivalent: diffuse muscle pain.
+fatigue_weakness,constitutional,binary,False,Is the patient unusually tired or too weak for normal activity?,Observed and reported.,malaria|typhoid|urti_pneumonia,E_88,Equivalent: too tired for usual activities.
+cough,respiratory,binary,False,Does the patient have a cough?,Observed or reported.,urti_pneumonia,E_201,Direct equivalent.
+productive_cough,respiratory,binary,False,Is the cough bringing up sputum or phlegm?,Reported; no instrument.,urti_pneumonia,E_77,Equivalent: cough producing coloured or increased sputum.
+sore_throat,respiratory,binary,False,Does the patient have a sore throat?,Reported symptom.,urti_pneumonia,E_97,Direct equivalent.
+runny_or_blocked_nose,respiratory,binary,False,Does the patient have a runny or blocked nose?,Observed or reported.,urti_pneumonia,E_181,Direct equivalent: nasal congestion or clear runny nose.
+difficulty_breathing,respiratory,binary,False,Is the patient having difficulty breathing?,Observed.,urti_pneumonia,E_66,Equivalent: significant shortness of breath or difficulty breathing.
+fast_breathing,respiratory,binary,False,"Counting for one minute, is the breathing rate raised for the patient's age band?","IMCI breath counting; requires only a timepiece, not a diagnostic instrument.",urti_pneumonia,NONE,DDXPlus has no respiratory rate or fast breathing evidence.
+chest_indrawing,respiratory,binary,False,Is the lower chest wall drawing in when the patient breathes in?,IMCI visual sign; no instrument.,urti_pneumonia,NONE,DDXPlus has no chest indrawing evidence.
+noisy_breathing_wheeze,respiratory,binary,False,Is the patient's breathing noisy or wheezy?,Audible without a stethoscope.,urti_pneumonia,E_112,Equivalent: wheeze or noisy breathing after coughing spells.
+diarrhoea,gastrointestinal,binary,False,Does the patient have loose or watery stools?,Reported.,diarrhoeal|typhoid,E_51,Direct equivalent: diarrhoea or increased stool frequency.
+diarrhoea_3plus_daily,gastrointestinal,binary,False,Three or more loose stools in the past 24 hours?,Recall question.,diarrhoeal,NONE,DDXPlus records diarrhoea presence but not stool frequency threshold.
+blood_in_stool,gastrointestinal,binary,False,Is there visible blood in the stool?,Observed or reported.,diarrhoeal|typhoid,E_179,Equivalent: light red blood or clots in stool.
+vomiting,gastrointestinal,binary,False,Has the patient vomited?,Observed or reported.,diarrhoeal|malaria|typhoid,E_211,Equivalent: vomited several times or repeated efforts to vomit.
+nausea,gastrointestinal,binary,False,Does the patient feel nauseous?,Reported symptom.,malaria|typhoid|uti,E_148,Direct equivalent.
+abdominal_pain,gastrointestinal,binary,False,Does the patient have abdominal pain?,Reported and elicited by gentle palpation.,typhoid|diarrhoeal|uti,NONE,"DDXPlus handles pain only through categorical location and intensity items (E_56, E_58) that a binary checklist cannot collect."
+poor_appetite,gastrointestinal,binary,False,Has the patient lost their appetite?,Reported.,typhoid|malaria,E_161,Equivalent: recent loss of appetite.
+sunken_eyes,hydration,binary,False,Do the patient's eyes appear sunken?,IMCI visual sign.,diarrhoeal,NONE,No hydration assessment items exist in DDXPlus.
+slow_skin_pinch,hydration,binary,False,Does a pinch of abdominal skin go back slowly?,IMCI manual sign; no instrument.,diarrhoeal,NONE,No hydration assessment items exist in DDXPlus.
+excessive_thirst,hydration,binary,False,Is the patient drinking eagerly or unusually thirsty?,IMCI observation.,diarrhoeal,NONE,No thirst evidence exists in DDXPlus.
+lethargy_reduced_alertness,hydration,binary,True,"Is the patient lethargic, drowsy or difficult to rouse?",IMCI danger sign; observed.,diarrhoeal|malaria,NONE,DDXPlus records loss of consciousness (E_159) but not graded lethargy or reduced alertness.
+unable_to_drink_or_feed,hydration,binary,True,Is the patient unable to drink or breastfeed?,IMCI danger sign; observed.,diarrhoeal|malaria|urti_pneumonia,NONE,No feeding or intake evidence exists in DDXPlus.
+convulsions,neurological,binary,True,Has the patient had a fit or convulsion during this illness?,IMCI general danger sign; observed or reported by the carer.,malaria,E_43,"Equivalent: loss of consciousness with violent sustained muscle contractions, or an absence episode."
+painful_urination,urinary,binary,False,Does it burn or hurt when the patient passes urine?,Reported symptom.,uti,NONE,DDXPlus contains no urinary symptom evidence.
+frequent_urination,urinary,binary,False,Is the patient passing urine more often than usual?,Reported symptom.,uti,NONE,DDXPlus contains no urinary symptom evidence.
+urinary_urgency,urinary,binary,False,Does the patient feel a sudden urgent need to pass urine?,Reported symptom.,uti,NONE,DDXPlus contains no urinary symptom evidence.
+cloudy_or_foul_urine,urinary,binary,False,Is the urine cloudy or unusually foul smelling?,Observed or reported.,uti,NONE,"DDXPlus contains no urinary symptom evidence. E_188 records pale stools with dark urine, which is a hepatobiliary sign, not a urinary tract symptom."
+flank_or_lower_back_pain,urinary,binary,False,Does the patient have pain in the flank or lower back?,Reported and elicited.,uti,NONE,DDXPlus handles pain only through categorical location items a binary checklist cannot collect.
+jaundice_yellow_eyes,other,binary,False,Are the whites of the patient's eyes yellow?,Visual sign; no instrument.,malaria|typhoid,NONE,DDXPlus contains no jaundice evidence.
+skin_rash,other,binary,False,Does the patient have a new skin rash?,Visual sign.,typhoid,E_129,Equivalent: skin lesions or redness related to the presenting condition.
+age_band,covariate,categorical,False,Patient age band: under_5 | 5_to_14 | 15_to_49 | 50_plus,Reported.,all,AGE,DDXPlus provides continuous AGE; binned to these bands for the calibration comparison only.
+sex,covariate,categorical,False,Patient sex: female | male,Reported.,all,SEX,DDXPlus provides SEX directly.
