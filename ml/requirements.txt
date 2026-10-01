@@ -1,0 +1,20 @@
+# Core scientific stack
+numpy
+pandas
+pyyaml
+scipy
+
+# Modelling
+scikit-learn
+xgboost
+joblib
+
+# Explainability (proposal 3.2.4)
+shap
+
+# Figures for Chapter 5
+matplotlib
+
+# Thin presentation notebooks
+jupyter
+ipykernel

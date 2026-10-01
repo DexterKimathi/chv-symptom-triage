@@ -1,0 +1,101 @@
+# Generator configuration.
+#
+# Every number the generator uses is declared here. Nothing is hardcoded in the
+# script. Changing this file plus the --seed argument fully determines the corpus
+# (proposal 3.2.1: "reproducible from the script and its configuration file alone").
+
+seed: 42
+
+corpus:
+  # Balanced across the five classes (proposal 3.2.1).
+  records_per_class: 4000
+  conditions:
+    - malaria
+    - typhoid
+    - urti_pneumonia
+    - diarrhoeal
+    - uti
+
+# ---------------------------------------------------------------------------
+# Ordinal band -> probability mapping.
+#
+# This is the single declared rule referred to in the methodology. Clinical
+# guidelines describe a symptom as characteristic, common or occasional for a
+# condition; they rarely publish a frequency. The judgement therefore sits in the
+# ORDINAL BAND, which is taken from the guideline's own language and recorded per
+# cell with the guideline named. The numeric mapping below is applied uniformly
+# and is not varied per cell.
+#
+# Cells with a real published frequency override this mapping entirely and are
+# marked SOURCED in the probability table.
+# ---------------------------------------------------------------------------
+bands:
+  cardinal: 0.85      # guideline treats the symptom as defining or near-universal
+  common: 0.60        # guideline lists it as a usual feature
+  frequent: 0.40      # guideline lists it as often present
+  occasional: 0.20    # guideline lists it as sometimes present
+  background: 0.03    # not characteristic of this condition
+
+# ---------------------------------------------------------------------------
+# Mechanisms that prevent artificially clean class separation (proposal 3.2.1).
+# ---------------------------------------------------------------------------
+atypical:
+  # Share of records drawn from a widened distribution rather than the
+  # condition's own column. Models the presentation that does not follow the book.
+  rate: 0.12
+  # Widening pulls each probability toward 0.5:  p' = p + alpha * (0.5 - p)
+  # alpha = 0 leaves the column unchanged; alpha = 1 collapses it to a coin flip.
+  alpha: 0.45
+
+label_noise:
+  # Share of records that keep their symptom vector but are relabelled to a
+  # different class. Models disagreement between the recorded and true diagnosis.
+  rate: 0.03
+
+unanswered:
+  # Per 3.2.2 an unasked question is a distinct third state, not a recorded
+  # negative. This is the share of items left unanswered per record.
+  rate: 0.05
+  encoding: -1
+
+# ---------------------------------------------------------------------------
+# Definitional constraints.
+#
+# These are not invented correlations. Each one follows from the definition of
+# the item itself or from the IMCI severity hierarchy, so they add realistic
+# dependency structure without introducing an unsourced parameter.
+# Applied as post-draw repairs: if the dependent item is 1 and no antecedent is
+# 1, the dependent item is reset to 0.
+# ---------------------------------------------------------------------------
+constraints:
+  - dependent: productive_cough
+    requires_any: [cough]
+    basis: "A productive cough presupposes a cough (item definition)."
+  - dependent: diarrhoea_3plus_daily
+    requires_any: [diarrhoea]
+    basis: "A stool-frequency threshold presupposes diarrhoea (item definition)."
+  - dependent: fever_over_3_days
+    requires_any: [fever_current]
+    basis: "Fever duration presupposes fever (item definition)."
+  - dependent: chest_indrawing
+    requires_any: [difficulty_breathing, fast_breathing]
+    basis: "IMCI treats chest indrawing as a severity escalation of difficult or fast breathing."
+  - dependent: unable_to_drink_or_feed
+    requires_any: [lethargy_reduced_alertness, vomiting, difficulty_breathing]
+    basis: "IMCI records inability to drink alongside a general danger sign."
+
+covariates:
+  age_band:
+    values: [under_5, 5_to_14, 15_to_49, 50_plus]
+    # Uniform pending a sourced age distribution; recorded as an open item.
+    weights: [0.25, 0.25, 0.25, 0.25]
+    status: TODO
+  sex:
+    values: [female, male]
+    weights: [0.5, 0.5]
+    status: TODO
+
+output:
+  corpus_path: data/generated/corpus.csv
+  table_path: config/symptom_probability_table.csv
+  report_path: outputs/reports/corpus_report.md

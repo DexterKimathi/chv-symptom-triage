@@ -1,0 +1,120 @@
+# Clinical profile per condition.
+#
+# Two kinds of entry:
+#
+#   sourced:   a published frequency. The value is used exactly as reported and
+#              carries its source id from config/source_notes.md.
+#   bands:     the ordinal band the guideline's language places the symptom in.
+#              Converted to a probability by the single declared mapping in
+#              generator.yaml. The guideline is named per condition below.
+#
+# Any schema item not listed for a condition falls to the background band.
+# Status vocabulary: SOURCED | SOURCED-DIRECTIONAL | VERIFY | TODO
+
+malaria:
+  guideline: "WHO Guidelines for Malaria (2023); WHO IMCI chart booklet (2014)"
+  default_status: SOURCED-DIRECTIONAL
+  sourced: {}
+  bands:
+    cardinal: [fever_current]
+    common: [chills_rigors, headache, fatigue_weakness, body_aches]
+    frequent: [drenching_sweats, poor_appetite, vomiting]
+    occasional:
+      - nausea
+      - abdominal_pain
+      - diarrhoea
+      - cough
+      - fever_over_3_days
+      - lethargy_reduced_alertness
+      - jaundice_yellow_eyes
+      - convulsions
+  notes:
+    jaundice_yellow_eyes: "Severe malaria sign; occasional in uncomplicated disease."
+    convulsions: "Cerebral malaria feature and IMCI general danger sign. The occasional band
+      likely overstates its rate in uncomplicated malaria; recorded as an open item. In the
+      deployed system a convulsion triggers urgent referral before the model runs, so this
+      probability affects training only, not the safety rule."
+    lethargy_reduced_alertness: "IMCI general danger sign; escalates to severe malaria."
+
+typhoid:
+  guideline: "Kenya MOH clinical guidelines (PENDING - see source_notes.md); WHO IMCI chart booklet (2014)"
+  default_status: SOURCED-DIRECTIONAL
+  # Habte et al. (2018), n = 21 blood-culture-confirmed cases, southern Ethiopia.
+  # Small sample: every cell below is marked VERIFY, not SOURCED, pending a larger cohort.
+  sourced:
+    fatigue_weakness:   {value: 0.810, source: S001, status: VERIFY}
+    fever_over_3_days:  {value: 0.714, source: S001, status: VERIFY,
+                         note: "Source reports fever >= 5 days; schema item is > 3 days. Not a clean match."}
+    poor_appetite:      {value: 0.619, source: S001, status: VERIFY}
+    cough:              {value: 0.524, source: S001, status: VERIFY}
+    abdominal_pain:     {value: 0.381, source: S001, status: VERIFY}
+    diarrhoea:          {value: 0.286, source: S001, status: VERIFY}
+    skin_rash:          {value: 0.143, source: S001, status: VERIFY}
+    jaundice_yellow_eyes: {value: 0.220, source: S002, status: VERIFY,
+                         note: "De Santis et al. (2017), jaundice in 22% of typhoid cases."}
+  bands:
+    cardinal: [fever_current]
+    common: [headache]
+    frequent: [nausea, vomiting]
+    occasional: [body_aches, chills_rigors, blood_in_stool]
+  notes:
+    _omission: "Constipation is a classically discriminative typhoid feature (33.3% in S001)
+      but is not in the 34-item schema. Recorded as a candidate addition."
+
+urti_pneumonia:
+  guideline: "WHO IMCI chart booklet (2014), cough or difficult breathing assessment"
+  default_status: SOURCED-DIRECTIONAL
+  sourced: {}
+  bands:
+    cardinal: [cough]
+    common: [runny_or_blocked_nose, sore_throat, fever_current]
+    frequent: [difficulty_breathing, fast_breathing, productive_cough, noisy_breathing_wheeze]
+    occasional:
+      - chest_indrawing
+      - body_aches
+      - headache
+      - fatigue_weakness
+      - poor_appetite
+      - vomiting
+  notes:
+    fast_breathing: "IMCI classification sign for pneumonia; age-banded threshold."
+    chest_indrawing: "IMCI severe pneumonia sign; lower frequency in the merged label."
+
+diarrhoeal:
+  guideline: "WHO IMCI chart booklet (2014), diarrhoea and dehydration classification"
+  default_status: SOURCED-DIRECTIONAL
+  sourced: {}
+  bands:
+    cardinal: [diarrhoea]
+    common: [diarrhoea_3plus_daily, vomiting, nausea]
+    frequent: [abdominal_pain, excessive_thirst, poor_appetite]
+    occasional:
+      - fever_current
+      - sunken_eyes
+      - slow_skin_pinch
+      - lethargy_reduced_alertness
+      - blood_in_stool
+      - unable_to_drink_or_feed
+      - fatigue_weakness
+  notes:
+    _dehydration: "Sunken eyes, slow skin pinch, excessive thirst and lethargy are the IMCI
+      dehydration classification signs. None has a DDXPlus equivalent."
+
+uti:
+  guideline: "PENDING - no primary-care UTI symptom-frequency source secured yet"
+  default_status: VERIFY
+  sourced: {}
+  bands:
+    cardinal: [painful_urination]
+    common: [frequent_urination, urinary_urgency]
+    frequent: [cloudy_or_foul_urine, abdominal_pain]
+    occasional:
+      - flank_or_lower_back_pain
+      - fever_current
+      - nausea
+      - fatigue_weakness
+      - fever_over_3_days
+  notes:
+    _status: "The entire UTI column is SOURCED-DIRECTIONAL at best and is marked VERIFY
+      until a primary-care symptom-frequency study is secured. This is the weakest
+      column in the table and must be stated as such in Chapter 5."

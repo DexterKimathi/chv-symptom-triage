@@ -1,0 +1,5 @@
+model,accuracy,macro_precision,macro_recall,macro_f1,log_loss,brier,ece,recall_malaria,recall_typhoid,recall_urti_pneumonia,recall_diarrhoeal,recall_uti,all_recall_floors_met,separability_flag
+Naive Bayes (table reference),0.8533,0.8542,0.8534,0.8535,0.6906,0.2344,0.0576,0.8165,0.7826,0.9199,0.8600,0.8880,False,False
+Logistic Regression,0.8553,0.8559,0.8554,0.8556,0.5052,0.2317,0.0420,0.7950,0.8110,0.9215,0.8683,0.8813,False,False
+Random Forest,0.8363,0.8363,0.8364,0.8361,0.6395,0.2634,0.1007,0.7719,0.7625,0.9215,0.8617,0.8645,False,False
+XGBoost,0.8427,0.8432,0.8428,0.8429,0.5058,0.2369,0.0180,0.7868,0.7893,0.9082,0.8550,0.8746,False,False
