@@ -12,8 +12,8 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Model artefacts over 50 MB are stored in the ML repo release, not here
-app/services/model/*.joblib
+# Local development database. Rebuild with: python -m scripts.seed --reset
+*.db
 
 # Editors / OS
 .idea/
