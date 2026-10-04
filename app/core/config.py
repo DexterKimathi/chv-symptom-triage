@@ -25,11 +25,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
 
     model_path: str = str(ROOT / "app" / "services" / "model" / "model.joblib")
-    model_version: str = "v0.1-lr-uncalibrated"
-
-    # Referral thresholds. PROVISIONAL: to be set from held-out test results and stated in
-    # the report. Below low_confidence the top result is not named. A gap between the top
-    # two smaller than proximity_margin is too close to call (proposal 1.5.2).
+    # Fallbacks only. From v1.0 the model bundle carries its own version and referral
+    # thresholds, chosen on validation in the ML repo (src/finalise.py), and those are used.
+    model_version: str = "unversioned"
     low_confidence: float = 0.50
     proximity_margin: float = 0.10
 

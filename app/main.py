@@ -40,6 +40,6 @@ def health() -> dict[str, str]:
     predictor = get_predictor()
     return {
         "status": "ok",
-        "model_version": get_settings().model_version,
+        "model_version": predictor.model_version or get_settings().model_version,
         "config_hash": predictor.config_hash[:12],
     }

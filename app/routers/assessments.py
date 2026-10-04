@@ -68,8 +68,8 @@ def create_assessment(
         ranked=prediction.ranked,
         names=names,
         guidance_by_condition={code: (c.referral_level, c.guidance) for code, c in conditions.items()},
-        low_confidence=settings.low_confidence,
-        proximity_margin=settings.proximity_margin,
+        low_confidence=(predictor.thresholds or {}).get("low_confidence", settings.low_confidence),
+        proximity_margin=(predictor.thresholds or {}).get("proximity_margin", settings.proximity_margin),
     )
 
     questions = {q.code: q for q in db.scalars(select(Question)).all()}
@@ -90,7 +90,7 @@ def create_assessment(
         explanation=[{"question": questions[q].text_en if q in questions else q,
                       "answer": a, "weight": round(w, 4)}
                      for q, a, w in prediction.explanation],
-        model_version=settings.model_version,
+        model_version=predictor.model_version or settings.model_version,
         answers=[AssessmentAnswer(question_id=questions[code].id, answer=answer)
                  for code, answer in body.answers.items() if code in questions],
     )
