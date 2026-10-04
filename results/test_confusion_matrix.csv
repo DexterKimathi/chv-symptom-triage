@@ -1,0 +1,6 @@
+actual,malaria,typhoid,urti_pneumonia,diarrhoeal,uti
+malaria,523,39,14,17,12
+typhoid,103,452,16,18,9
+urti_pneumonia,28,14,539,10,8
+diarrhoeal,27,18,14,524,16
+uti,24,20,16,20,518
