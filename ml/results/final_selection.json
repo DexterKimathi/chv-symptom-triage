@@ -1,0 +1,256 @@
+{
+  "evaluation_partition": "validation",
+  "test_set_opened": false,
+  "reweighting_rule": "Train Logistic Regression with malaria examples weighted 1, 1.25, 1.5, 2,\n  2.5 and 3 times. Choose the smallest weight that reaches malaria recall 0.90 while every\n  other proposal floor still holds (other recall floors, macro F1 >= 0.80). If none\n  reaches 0.90, choose the weight with the highest malaria recall that keeps the other\n  floors, and report the shortfall.",
+  "threshold_rule": "A condition is named only when its probability is at least `low_confidence`\n  and leads the runner-up by at least `proximity_margin`. Choose the pair that names a\n  condition for the largest share of patients while named results are correct at least\n  90% of the time. Ties go to the lower thresholds.",
+  "trials": [
+    {
+      "weight": 1.0,
+      "model": "LR malaria x1.0",
+      "accuracy": 0.8553333333333333,
+      "macro_precision": 0.8559181758943766,
+      "macro_recall": 0.8554436482220668,
+      "macro_f1": 0.8555960454663738,
+      "log_loss": 0.5052231531555895,
+      "brier": 0.23172642322051584,
+      "ece": 0.041951383735716025,
+      "per_class_recall": {
+        "malaria": 0.7950413223140496,
+        "typhoid": 0.8110367892976589,
+        "urti_pneumonia": 0.9215358931552587,
+        "diarrhoeal": 0.8683333333333333,
+        "uti": 0.8812709030100334
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false
+    },
+    {
+      "weight": 1.25,
+      "model": "LR malaria x1.25",
+      "accuracy": 0.8553333333333333,
+      "macro_precision": 0.8567220361493675,
+      "macro_recall": 0.8553939011404419,
+      "macro_f1": 0.8558517919075042,
+      "log_loss": 0.5073636085390433,
+      "brier": 0.23282691738284644,
+      "ece": 0.043108367015537136,
+      "per_class_recall": {
+        "malaria": 0.8165289256198347,
+        "typhoid": 0.7959866220735786,
+        "urti_pneumonia": 0.9198664440734557,
+        "diarrhoeal": 0.8683333333333333,
+        "uti": 0.8762541806020067
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false
+    },
+    {
+      "weight": 1.5,
+      "model": "LR malaria x1.5",
+      "accuracy": 0.851,
+      "macro_precision": 0.8537643351087008,
+      "macro_recall": 0.8510090498823303,
+      "macro_f1": 0.8516416310914184,
+      "log_loss": 0.5113803197690203,
+      "brier": 0.23508509725220422,
+      "ece": 0.03991257545550921,
+      "per_class_recall": {
+        "malaria": 0.8330578512396695,
+        "typhoid": 0.7642140468227425,
+        "urti_pneumonia": 0.9215358931552587,
+        "diarrhoeal": 0.865,
+        "uti": 0.8712374581939799
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": true,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false
+    },
+    {
+      "weight": 2.0,
+      "model": "LR malaria x2.0",
+      "accuracy": 0.846,
+      "macro_precision": 0.8528743044810572,
+      "macro_recall": 0.845930483181666,
+      "macro_f1": 0.8469628885515673,
+      "log_loss": 0.5226104708338154,
+      "brier": 0.241466060767013,
+      "ece": 0.03577688425284976,
+      "per_class_recall": {
+        "malaria": 0.8628099173553719,
+        "typhoid": 0.7274247491638796,
+        "urti_pneumonia": 0.9115191986644408,
+        "diarrhoeal": 0.8583333333333333,
+        "uti": 0.8695652173913043
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": false,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false
+    },
+    {
+      "weight": 2.5,
+      "model": "LR malaria x2.5",
+      "accuracy": 0.8373333333333334,
+      "macro_precision": 0.8502893447389581,
+      "macro_recall": 0.8371896114513652,
+      "macro_f1": 0.8389800827849436,
+      "log_loss": 0.5360781996051037,
+      "brier": 0.24913977485196173,
+      "ece": 0.02652920122336172,
+      "per_class_recall": {
+        "malaria": 0.8876033057851239,
+        "typhoid": 0.6956521739130435,
+        "urti_pneumonia": 0.9031719532554258,
+        "diarrhoeal": 0.8433333333333334,
+        "uti": 0.8561872909698997
+      },
+      "recall_floors_met": {
+        "malaria": false,
+        "typhoid": false,
+        "urti_pneumonia": true,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false
+    },
+    {
+      "weight": 3.0,
+      "model": "LR malaria x3.0",
+      "accuracy": 0.8313333333333334,
+      "macro_precision": 0.849847827594942,
+      "macro_recall": 0.8311408852474594,
+      "macro_f1": 0.8336614004126564,
+      "log_loss": 0.5501283084708676,
+      "brier": 0.2572013846781845,
+      "ece": 0.025588505189707768,
+      "per_class_recall": {
+        "malaria": 0.9041322314049587,
+        "typhoid": 0.6755852842809364,
+        "urti_pneumonia": 0.8964941569282137,
+        "diarrhoeal": 0.8316666666666667,
+        "uti": 0.8478260869565217
+      },
+      "recall_floors_met": {
+        "malaria": true,
+        "typhoid": false,
+        "urti_pneumonia": false,
+        "diarrhoeal": true,
+        "uti": true
+      },
+      "all_floors_met": false,
+      "macro_f1_floor_met": true,
+      "ece_ceiling_met": true,
+      "separability_flag": false
+    }
+  ],
+  "chosen_weight": 1.5,
+  "malaria_target_reached": false,
+  "chosen_validation_result": {
+    "model": "LR malaria x1.5",
+    "accuracy": 0.851,
+    "macro_precision": 0.8537643351087008,
+    "macro_recall": 0.8510090498823303,
+    "macro_f1": 0.8516416310914184,
+    "log_loss": 0.5113803197690203,
+    "brier": 0.23508509725220422,
+    "ece": 0.03991257545550921,
+    "per_class_recall": {
+      "malaria": 0.8330578512396695,
+      "typhoid": 0.7642140468227425,
+      "urti_pneumonia": 0.9215358931552587,
+      "diarrhoeal": 0.865,
+      "uti": 0.8712374581939799
+    },
+    "recall_floors_met": {
+      "malaria": false,
+      "typhoid": true,
+      "urti_pneumonia": true,
+      "diarrhoeal": true,
+      "uti": true
+    },
+    "all_floors_met": false,
+    "macro_f1_floor_met": true,
+    "ece_ceiling_met": true,
+    "separability_flag": false,
+    "confusion_matrix": [
+      [
+        504,
+        57,
+        15,
+        15,
+        14
+      ],
+      [
+        96,
+        457,
+        14,
+        18,
+        13
+      ],
+      [
+        20,
+        10,
+        552,
+        12,
+        5
+      ],
+      [
+        30,
+        23,
+        10,
+        519,
+        18
+      ],
+      [
+        25,
+        15,
+        14,
+        23,
+        521
+      ]
+    ]
+  },
+  "thresholds": {
+    "low_confidence": 0.3,
+    "proximity_margin": 0.3,
+    "named_share": 0.8453333333333334,
+    "named_precision": 0.9029968454258676
+  },
+  "config_hash": "e5a754c9a8edf02dd6f3aa39c686366adfaf8c3d201f0e5ecd3724ae66b9b178"
+}

@@ -1,0 +1,131 @@
+{
+  "evaluation_partition": "test",
+  "opened_once": true,
+  "model_version": "v1.0",
+  "malaria_weight": 1.5,
+  "thresholds": {
+    "low_confidence": 0.3,
+    "proximity_margin": 0.3
+  },
+  "model_result": {
+    "model": "Logistic Regression v1.0",
+    "accuracy": 0.8522840946982327,
+    "macro_precision": 0.8567608122396215,
+    "macro_recall": 0.8522321524938535,
+    "macro_f1": 0.8530165762966637,
+    "log_loss": 0.5057549948910464,
+    "brier": 0.23340237322531604,
+    "ece": 0.04233332115351024,
+    "per_class_recall": {
+      "malaria": 0.8644628099173554,
+      "typhoid": 0.7558528428093646,
+      "urti_pneumonia": 0.8998330550918197,
+      "diarrhoeal": 0.8747913188647746,
+      "uti": 0.8662207357859532
+    },
+    "recall_floors_met": {
+      "malaria": false,
+      "typhoid": true,
+      "urti_pneumonia": false,
+      "diarrhoeal": true,
+      "uti": true
+    },
+    "all_floors_met": false,
+    "macro_f1_floor_met": true,
+    "ece_ceiling_met": true,
+    "separability_flag": false,
+    "confusion_matrix": [
+      [
+        523,
+        39,
+        14,
+        17,
+        12
+      ],
+      [
+        103,
+        452,
+        16,
+        18,
+        9
+      ],
+      [
+        28,
+        14,
+        539,
+        10,
+        8
+      ],
+      [
+        27,
+        18,
+        14,
+        524,
+        16
+      ],
+      [
+        24,
+        20,
+        16,
+        20,
+        518
+      ]
+    ]
+  },
+  "system": {
+    "named_share": 0.8546182060686895,
+    "named_precision": 0.9036285602809208,
+    "danger_sign_share": 0.20840280093364455,
+    "referral_level_recall": {
+      "malaria": 0.9818181818181818,
+      "typhoid": 0.979933110367893,
+      "urti_pneumonia": 0.9849749582637729,
+      "diarrhoeal": 1.0,
+      "uti": 0.9832775919732442
+    }
+  },
+  "mistake_tolerance": [
+    {
+      "mode": "flip",
+      "answers_changed": 1,
+      "macro_f1": 0.8147661503135503,
+      "malaria_recall": 0.8363636363636363,
+      "urti_pneumonia_recall": 0.8697829716193656
+    },
+    {
+      "mode": "flip",
+      "answers_changed": 2,
+      "macro_f1": 0.7866774294734132,
+      "malaria_recall": 0.8082644628099174,
+      "urti_pneumonia_recall": 0.8397328881469115
+    },
+    {
+      "mode": "flip",
+      "answers_changed": 3,
+      "macro_f1": 0.7532201181783807,
+      "malaria_recall": 0.7669421487603306,
+      "urti_pneumonia_recall": 0.8080133555926544
+    },
+    {
+      "mode": "blank",
+      "answers_changed": 1,
+      "macro_f1": 0.8441336496276135,
+      "malaria_recall": 0.8495867768595041,
+      "urti_pneumonia_recall": 0.9015025041736227
+    },
+    {
+      "mode": "blank",
+      "answers_changed": 2,
+      "macro_f1": 0.8366357061975327,
+      "malaria_recall": 0.8446280991735537,
+      "urti_pneumonia_recall": 0.8948247078464107
+    },
+    {
+      "mode": "blank",
+      "answers_changed": 3,
+      "macro_f1": 0.8226297539262838,
+      "malaria_recall": 0.8413223140495868,
+      "urti_pneumonia_recall": 0.8864774624373957
+    }
+  ]
+}
