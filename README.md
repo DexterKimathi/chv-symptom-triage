@@ -56,10 +56,10 @@ Dataset: synthetic, generated in the ML repo from a 170-cell symptom probability
 which every cell records its clinical source. No public dataset covers the five target
 conditions together. Rebuildable from config and seed; see the ML repo README.
 
-Model version used: `v0.1-lr-uncalibrated`. Logistic Regression, chosen on validation
-macro F1 over Random Forest and XGBoost, and compared against a Naive Bayes reference
-computed from the probability table. Not yet reweighted for malaria recall and not yet
-evaluated on the held-out test set.
+Model version used: **v1.0** (tag `v1.0` in the ML repo). Logistic Regression, chosen on
+validation over Random Forest and XGBoost and compared against a Naive Bayes reference
+computed from the probability table, with malaria weighted 1.5x. Held-out test set:
+macro F1 0.853, calibration error 0.042, malaria recall 0.864.
 
 Model file: `app/services/model/model.joblib`, exported by `src/compare.py` in the ML repo
 with its feature order, danger signs and data config hash. The scikit-learn version is
@@ -80,6 +80,6 @@ These are not optional and are checked before anything else runs:
 ## Status
 
 - [x] Week 1: backend endpoints
-- [x] Week 2: tests + real model (32 tests; model pending malaria reweighting and test-set evaluation)
+- [x] Week 2: tests + real model (33 tests; model v1.0 evaluated on the held-out test set)
 - [ ] Week 3: frontend
 - [ ] Week 4: deployed + demo

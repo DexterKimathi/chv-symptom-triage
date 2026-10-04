@@ -13,7 +13,13 @@ def _assess(client, headers, answers, ref="T-1", age="15_to_49", sex="female"):
 def test_health_reports_model(client):
     body = client.get("/health").json()
     assert body["status"] == "ok"
-    assert body["model_version"] and body["config_hash"]
+    assert body["model_version"] == "v1.0"
+    assert body["config_hash"]
+
+
+def test_thresholds_come_from_the_model_file():
+    from app.services.predictor import get_predictor
+    assert get_predictor().thresholds == {"low_confidence": 0.3, "proximity_margin": 0.3}
 
 
 # --- auth -------------------------------------------------------------------- #

@@ -60,8 +60,11 @@ inputs it never saw in training.
 5. **Explain.** The answers that pushed the top condition most, relative to the others.
 6. **Save and return**, with the disclaimer.
 
-Both thresholds are **provisional** (low confidence 0.50, proximity margin 0.10) and will
-be set from held-out test results and stated in the report.
+The thresholds travel inside the model file. For model v1.0 they were chosen on
+validation data so that named results are correct at least 90% of the time: a condition
+is named only when it leads the runner-up by **0.30** (the low-confidence value, 0.30, is
+implied by that lead). On the held-out test set this named a condition for 85.5% of
+patients, correct 90.4% of the time.
 
 ### Response `201`
 
@@ -84,7 +87,7 @@ be set from held-out test results and stated in the report.
   "referral_level": "refer_same_day",
   "guidance": "Refer today for a malaria test. ...",
   "disclaimer": "This is decision support, not a diagnosis. ...",
-  "model_version": "v0.1-lr-uncalibrated",
+  "model_version": "v1.0",
   "created_at": "2026-10-01T14:02:11Z"
 }
 ```
