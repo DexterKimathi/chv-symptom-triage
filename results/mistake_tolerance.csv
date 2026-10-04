@@ -1,0 +1,7 @@
+mode,answers_changed,macro_f1,malaria_recall,urti_pneumonia_recall
+flip,1,0.8148,0.8364,0.8698
+flip,2,0.7867,0.8083,0.8397
+flip,3,0.7532,0.7669,0.8080
+blank,1,0.8441,0.8496,0.9015
+blank,2,0.8366,0.8446,0.8948
+blank,3,0.8226,0.8413,0.8865
