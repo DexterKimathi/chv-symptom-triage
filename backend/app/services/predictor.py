@@ -37,6 +37,10 @@ class Predictor:
         self.conditions: list[str] = bundle["conditions"]
         self.unanswered = int(bundle["unanswered_code"])
         self.config_hash: str = bundle["config_hash"]
+        # Referral thresholds and version travel with the model they were chosen for.
+        # Bundles older than v1.0 carry neither; the settings fallbacks apply then.
+        self.thresholds: dict | None = bundle.get("thresholds")
+        self.model_version: str | None = bundle.get("model_version")
         self.covariates = [f for f in self.feature_order if f in ("age_band", "sex")]
         self.symptoms = [f for f in self.feature_order if f not in self.covariates]
 
