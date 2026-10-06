@@ -17,4 +17,7 @@ def login(body: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse:
     # reveal which phone numbers are registered.
     if user is None or not user.is_active or not verify_password(body.password, user.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Incorrect phone or password")
-    return TokenResponse(access_token=create_access_token(user.id, user.role), role=user.role)
+    return TokenResponse(
+        access_token=create_access_token(user.id, user.role),
+        role=user.role, name=user.name, area=user.area,
+    )

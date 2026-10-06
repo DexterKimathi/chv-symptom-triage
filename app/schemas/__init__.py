@@ -23,6 +23,9 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     role: Role
+    # Shown on the home screen so the volunteer can see whose account is open.
+    name: str
+    area: str | None = None
 
 
 # --- questions and conditions ----------------------------------------------- #
@@ -74,6 +77,9 @@ class ExplanationItem(BaseModel):
 
 class AssessmentResponse(BaseModel):
     id: int
+    patient_ref: str
+    age_band: AgeBand
+    sex: Sex
     outcome: Literal["urgent_referral", "likely_condition", "low_confidence", "too_close_to_call"]
     headline: str
     danger_sign_triggered: bool

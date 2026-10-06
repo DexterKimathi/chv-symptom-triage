@@ -17,6 +17,17 @@ Every endpoint except `/health` and `/auth/login` needs `Authorization: Bearer <
 | GET | `/conditions/{id}` | CHV, admin | Description, referral level and guidance for a condition |
 | POST | `/admin/users` | admin | Create a CHV or admin account |
 
+## POST /auth/login
+
+Request `{"phone": "0711111111", "password": "..."}`. Response `200`:
+
+```json
+{"access_token": "<jwt>", "token_type": "bearer", "role": "chv", "name": "Wanjiru Kamau", "area": "Kiambu"}
+```
+
+`name` and `area` are for display only. The token alone decides what the user may do.
+Wrong phone or password gives `401` with the same message either way.
+
 ## POST /assessments
 
 ### Request
@@ -71,6 +82,9 @@ patients, correct 90.4% of the time.
 ```json
 {
   "id": 12,
+  "patient_ref": "P-001",
+  "age_band": "15_to_49",
+  "sex": "female",
   "outcome": "likely_condition",
   "headline": "Likely: Malaria",
   "danger_sign_triggered": false,
