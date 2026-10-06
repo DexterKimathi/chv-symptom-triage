@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Plain system fonts: no font download, so pages stay light on mobile data. */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
