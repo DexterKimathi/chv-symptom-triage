@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
-import { Button, ErrorMessage, Field, inputClass, Screen } from "@/components/ui";
-import { ApiError } from "@/lib/api";
+import { Button, ErrorNotice, Field, inputClass, PasswordInput, PlusIcon } from "@/components/ui";
+import { ApiError, NetworkError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
@@ -12,7 +12,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<"wrong" | "offline" | string | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -24,33 +25,47 @@ export default function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      await login(phone.trim(), password);
+      await login(phone.replace(/\s/g, ""), password);
       router.replace("/");
     } catch (e) {
-      setError(e instanceof ApiError || e instanceof Error ? e.message : "Could not log in.");
-    } finally {
+      if (e instanceof NetworkError) setError("offline");
+      else if (e instanceof ApiError && (e.status === 401 || e.status === 422)) setError("wrong");
+      else setError(e instanceof Error ? e.message : "Could not log in.");
       setBusy(false);
     }
   }
 
   return (
-    <Screen>
-      <div className="mt-8 flex flex-col gap-1">
-        <h1 className="text-3xl font-bold">CHV Symptom Triage</h1>
-        <p className="text-lg text-slate-600">Log in to start an assessment.</p>
+    <main className="flex flex-1 flex-col gap-6 px-4 pt-10 pb-8">
+      <div className="flex flex-col gap-3">
+        <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue"><PlusIcon size={28} /></span>
+        <h1 className="text-headline font-bold">CHV Triage</h1>
+        {!error && <p className="text-small text-ink-soft">Symptom checklist and referral support for community health volunteers.</p>}
       </div>
-      <form onSubmit={submit} className="flex flex-col gap-4">
+
+      {error && (
+        <ErrorNotice>
+          {error === "wrong" ? <><b>Phone number or password is not correct.</b> Check both and try again.</>
+            : error === "offline" ? <><b>No internet connection, please try again.</b> Move to a spot with better signal.</>
+            : error}
+        </ErrorNotice>
+      )}
+
+      <form onSubmit={submit} className="flex flex-col gap-5">
         <Field label="Phone number">
-          <input className={inputClass} type="tel" inputMode="tel" autoComplete="username"
-            value={phone} onChange={(e) => setPhone(e.target.value)} required />
+          <input className={inputClass(false, true)} type="tel" inputMode="tel" autoComplete="username"
+            placeholder="07XX XXX XXX" value={phone} onChange={(e) => setPhone(e.target.value)} required />
         </Field>
         <Field label="Password">
-          <input className={inputClass} type="password" autoComplete="current-password"
-            value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <PasswordInput value={password} onChange={setPassword} show={showPassword}
+            onToggle={() => setShowPassword((s) => !s)} autoComplete="current-password" />
         </Field>
-        <ErrorMessage message={error} />
-        <Button type="submit" disabled={busy}>{busy ? "Logging in…" : "Log in"}</Button>
+        <Button type="submit" loading={busy}>{busy ? "Logging in…" : "Log in"}</Button>
       </form>
-    </Screen>
+
+      <p className="text-small text-ink-soft">
+        {busy ? "On slow data this can take up to a minute." : "Forgot your password? Ask your supervisor to reset it."}
+      </p>
+    </main>
   );
 }

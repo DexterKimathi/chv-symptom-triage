@@ -3,65 +3,116 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { ErrorMessage, Loading, pct, Screen } from "@/components/ui";
-import { api } from "@/lib/api";
+import { Alert, ButtonLink, Code, ErrorNotice, OfflineBanner, PlusIcon, Spinner, TopBar, TopTitle } from "@/components/ui";
+import { api, NetworkError } from "@/lib/api";
 import { RequireAuth, useAuth, useSessionGuard } from "@/lib/auth";
+import { shortWhen, summaryLabel } from "@/lib/format";
 import type { AssessmentSummary } from "@/lib/types";
+
+const FIRST_PAGE = 5;
 
 function Home() {
   const { session, logout } = useAuth();
   const guard = useSessionGuard();
   const [items, setItems] = useState<AssessmentSummary[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<"offline" | string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!session) return;
     api.assessments(session.token)
-      .then(setItems)
-      .catch((e) => { if (!guard(e)) setError(e.message); });
-  }, [session, guard]);
+      .then((list) => { setItems(list); setError(null); })
+      .catch((e) => {
+        if (guard(e)) return;
+        setError(e instanceof NetworkError ? "offline" : e.message);
+      });
+  }, [session, guard, attempt]);
+
+  const retry = () => { setError(null); setAttempt((n) => n + 1); };
+
+  const visible = showAll ? items : items?.slice(0, FIRST_PAGE);
 
   return (
-    <Screen>
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Assessments</h1>
-        <button onClick={logout} className="min-h-12 px-3 text-base text-slate-600 underline">Log out</button>
-      </header>
+    <>
+      <TopBar
+        left={<TopTitle>CHV Triage</TopTitle>}
+        right={<button onClick={logout} className="h-12 px-1 text-small font-bold text-blue">Log out</button>}
+      />
+      <main className="flex flex-1 flex-col gap-5 px-4 py-5">
+        {error === "offline" && <OfflineBanner detail="Move to a spot with better signal." onRetry={retry} />}
 
-      <Link href="/assess" className="flex min-h-16 items-center justify-center rounded-xl bg-teal-700 px-5 text-xl font-bold text-white hover:bg-teal-800">
-        Start assessment
-      </Link>
-      {session?.role === "admin" && (
-        <Link href="/admin" className="flex min-h-12 items-center justify-center rounded-xl border-2 border-slate-300 bg-white text-lg font-semibold">
-          Create volunteer account
-        </Link>
-      )}
-
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-slate-700">Recent</h2>
-        <ErrorMessage message={error} />
-        {!items && !error && <Loading />}
-        {items?.length === 0 && (
-          <p className="rounded-lg border-2 border-dashed border-slate-300 p-6 text-center text-slate-600">
-            No assessments yet. Start one above.
-          </p>
+        {session?.name && (
+          <div>
+            <p className="text-label font-bold">{session.name}</p>
+            {session.area && <p className="text-small text-ink-soft">{session.area}</p>}
+          </div>
         )}
-        {items?.map((a) => (
-          <Link key={a.id} href={`/history/${a.id}`}
-            className={`flex items-center justify-between gap-3 rounded-xl border-2 bg-white p-4 ${a.danger_sign_triggered ? "border-red-400" : "border-slate-200"}`}>
-            <div className="flex flex-col">
-              <span className="text-lg font-semibold">{a.patient_ref}</span>
-              <span className="text-sm text-slate-600">{new Date(a.created_at).toLocaleString()}</span>
+
+        <Link href="/assess"
+          className="flex min-h-[84px] items-center gap-4 rounded-xl bg-blue px-5 text-[22px] leading-7 font-bold text-white hover:bg-blue-dark">
+          <PlusIcon /> Start assessment
+        </Link>
+        {session?.role === "admin" && <ButtonLink href="/admin" variant="secondary">Add volunteer</ButtonLink>}
+
+        <section className="flex flex-col">
+          <h2 className="border-b border-divider pb-2 text-label font-bold">Recent assessments</h2>
+
+          {error && error !== "offline" && <div className="mt-3"><ErrorNotice>{error}</ErrorNotice></div>}
+
+          {error === "offline" && !items && (
+            <div className="mt-3 rounded-xl bg-surface p-4 text-center">
+              <p className="text-label font-bold">Could not load your assessments</p>
+              <p className="text-small text-ink-soft">They are safe. They will show when you are back online.</p>
             </div>
-            <span className={`text-right text-base font-semibold ${a.danger_sign_triggered ? "text-red-700" : "text-slate-800"}`}>
-              {a.danger_sign_triggered ? "Urgent referral"
-                : a.outcome === "likely_condition" ? `${a.top_condition} · ${pct(a.top_confidence)}`
-                : "Refer for assessment"}
-            </span>
-          </Link>
-        ))}
-      </section>
-    </Screen>
+          )}
+
+          {!items && !error && (
+            <div role="status">
+              <p className="flex items-center gap-2 py-3 text-small text-ink-soft"><Spinner /> Loading your assessments…</p>
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex items-center justify-between border-b border-divider py-4 pl-9" aria-hidden>
+                  <div className="flex flex-col gap-2"><span className="h-3.5 w-12 rounded bg-surface" /><span className="h-3.5 w-32 rounded bg-surface" /></div>
+                  <span className="h-3.5 w-10 rounded bg-surface" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {items?.length === 0 && (
+            <div className="mt-3 rounded-xl bg-surface px-4 py-6 text-center">
+              <p className="text-label font-bold">No assessments yet</p>
+              <p className="mt-1 text-small text-ink-soft">Tap <b className="text-ink">Start assessment</b> to check your first patient. Your results will appear here.</p>
+            </div>
+          )}
+
+          {visible?.map((a) => {
+            const urgent = a.outcome === "urgent_referral";
+            const when = shortWhen(a.created_at);
+            return (
+              <Link key={a.id} href={`/history/${a.id}`}
+                className="flex min-h-16 items-center gap-3 border-b border-divider py-3 hover:bg-surface">
+                <span className="w-6 flex-none">{urgent && <Alert />}</span>
+                <span className="flex flex-1 flex-col">
+                  <Code className="text-small">{a.patient_ref}</Code>
+                  <span className={`text-small ${urgent ? "font-bold text-red" : ""}`}>{summaryLabel(a)}</span>
+                </span>
+                <span className="text-right text-[14px] leading-5 text-ink-soft">
+                  {when.day}{when.time && <><br />{when.time}</>}
+                </span>
+                <span aria-hidden className="text-heading text-ink-soft">›</span>
+              </Link>
+            );
+          })}
+
+          {items && items.length > FIRST_PAGE && !showAll && (
+            <button onClick={() => setShowAll(true)} className="h-12 text-small font-bold text-blue">
+              Show older assessments
+            </button>
+          )}
+        </section>
+      </main>
+    </>
   );
 }
 
