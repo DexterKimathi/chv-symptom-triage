@@ -14,6 +14,9 @@ const STORAGE_KEY = "chv-triage-session";
 interface Session {
   token: string;
   role: Role;
+  // Display only. Sessions saved before these were added have neither.
+  name?: string;
+  area?: string | null;
 }
 
 interface AuthState {
@@ -79,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (phone: string, password: string) => {
     const result = await api.login(phone, password);
-    write({ token: result.access_token, role: result.role });
+    write({ token: result.access_token, role: result.role, name: result.name, area: result.area });
   }, []);
 
   const logout = useCallback(() => write(null), []);

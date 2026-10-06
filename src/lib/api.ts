@@ -22,7 +22,7 @@ export class ApiError extends Error {
 /** The request never reached the backend: no connection, or the server is down. */
 export class NetworkError extends Error {
   constructor() {
-    super("No internet connection. Check your data or Wi-Fi and try again.");
+    super("No internet connection, please try again");
   }
 }
 

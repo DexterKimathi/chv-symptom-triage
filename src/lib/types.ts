@@ -14,6 +14,8 @@ export interface TokenResponse {
   access_token: string;
   token_type: string;
   role: Role;
+  name: string;
+  area: string | null;
 }
 
 export interface Question {
@@ -45,6 +47,9 @@ export interface AssessmentRequest {
 
 export interface Assessment {
   id: number;
+  patient_ref: string;
+  age_band: AgeBand;
+  sex: Sex;
   outcome: Outcome;
   headline: string;
   danger_sign_triggered: boolean;
@@ -88,7 +93,7 @@ export interface User {
 
 export const AGE_BANDS: { value: AgeBand; label: string }[] = [
   { value: "under_5", label: "Under 5" },
-  { value: "5_to_14", label: "5 to 14" },
-  { value: "15_to_49", label: "15 to 49" },
-  { value: "50_plus", label: "50 and over" },
+  { value: "5_to_14", label: "5–14" },
+  { value: "15_to_49", label: "15–49" },
+  { value: "50_plus", label: "50+" },
 ];

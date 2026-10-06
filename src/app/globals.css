@@ -1,6 +1,48 @@
 @import "tailwindcss";
 
-/* Plain system fonts: no font download, so pages stay light on mobile data. */
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+/* Tokens from the CHV Triage design system. Red means one thing only: refer urgently. */
+@theme {
+  --color-ink: #0f1720;
+  --color-ink-soft: #3b4754;
+  --color-edge: #5c6773;
+  --color-divider: #cdd3d9;
+  --color-surface: #f1f3f5;
+  --color-canvas: #e3e6e9;
+  --color-track: #e3e7eb;
+  --color-blue: #13588a;
+  --color-blue-dark: #0c3f66;
+  --color-blue-tint: #e3eef6;
+  --color-red: #b3261e;
+  --color-red-tint: #fbeae8;
+  --color-amber: #f0b429;
+  --color-amber-tint: #fdf3dc;
+  --color-green: #1e6b3a;
+  --color-green-tint: #e4f1e8;
+
+  --font-sans: var(--font-atkinson), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-atkinson-mono), ui-monospace, monospace;
+
+  --text-display: 32px;
+  --text-display--line-height: 38px;
+  --text-headline: 28px;
+  --text-headline--line-height: 34px;
+  --text-title: 24px;
+  --text-title--line-height: 30px;
+  --text-heading: 20px;
+  --text-heading--line-height: 26px;
+  --text-question: 20px;
+  --text-question--line-height: 28px;
+  --text-body: 18px;
+  --text-body--line-height: 26px;
+  --text-label: 18px;
+  --text-label--line-height: 24px;
+  --text-small: 16px;
+  --text-small--line-height: 22px;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--color-blue-dark);
+  outline-offset: 2px;
 }
