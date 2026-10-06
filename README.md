@@ -6,7 +6,8 @@ Mobile-first website for community health volunteers. A volunteer logs in, answe
 yes/no symptom questions for a patient, and gets referral guidance with the most likely
 illness. It runs in the phone's browser, so there is nothing to install.
 
-Stack: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4.
+Stack: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4. Visual design: the CHV
+Triage design system (Atkinson Hyperlegible type, tokens in `src/app/globals.css`).
 
 ## Repos
 
@@ -32,10 +33,17 @@ Production build: `npm run build && npm start`. Lint: `npm run lint`.
 | Path | Who | What |
 |---|---|---|
 | `/login` | everyone | Phone number and password |
-| `/` | logged in | Start an assessment, list of recent ones |
-| `/assess` | logged in | Patient code, age and sex, then the questions in 7 short steps, danger signs first |
-| `/history/[id]` | logged in | The result: urgent banner if needed, what to do, other possibilities, the answers behind it, disclaimer |
-| `/admin` | admins | Create volunteer and admin accounts |
+| `/` | logged in | Volunteer name, start an assessment, recent assessments |
+| `/assess` | logged in | Patient code, age and sex, then 35 questions in 7 pages of 5. Next unlocks when all 5 are answered |
+| `/result/[id]` | logged in | The result straight after sending |
+| `/history/[id]` | logged in | A past result, read-only, exactly as first shown |
+| `/admin` | admins | Add a volunteer account |
+
+Every result follows the same order: what was found, what to do (the largest block, coloured
+by referral level), supporting detail, then the disclaimer. Red is used only for urgent referral.
+
+Answers are saved on the phone while the assessment is in progress, so a dropped connection
+never means asking the patient again. They are cleared once the result is saved, or on Cancel.
 
 Logged-out visitors are sent to `/login`. `/admin` is hidden from volunteers in the app, and
 the backend refuses admin calls from non-admin tokens (403), so the real check is on the server.
