@@ -17,6 +17,20 @@ def test_health_reports_model(client):
     assert body["config_hash"]
 
 
+def test_frontend_origin_is_allowed(client):
+    r = client.options("/questions", headers={
+        "Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "Authorization"})
+    assert r.status_code == 200
+    assert r.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+
+def test_unknown_origin_is_not_allowed(client):
+    r = client.options("/questions", headers={
+        "Origin": "https://evil.example", "Access-Control-Request-Method": "GET"})
+    assert "access-control-allow-origin" not in r.headers
+
+
 def test_thresholds_come_from_the_model_file():
     from app.services.predictor import get_predictor
     assert get_predictor().thresholds == {"low_confidence": 0.3, "proximity_margin": 0.3}
