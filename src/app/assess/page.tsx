@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  BackLink, Body, BottomBar, Button, ChoiceTile, Code, ErrorNotice, Field, FieldError, inputClass,
-  Loading, OfflineBanner, ProgressBar, TopBar, TopTitle,
+  BackLink, Body, BottomBar, Button, ChoiceTile, Code, contained, ErrorNotice, Field, FieldError, inputClass,
+  Loading, OfflineBanner, ProgressBar, TopBar, TopTitle, type Width,
 } from "@/components/ui";
 import { api, NetworkError } from "@/lib/api";
 import { RequireAuth, useAuth, useSessionGuard } from "@/lib/auth";
@@ -130,8 +130,8 @@ function Assess() {
   if (!questions) {
     return (
       <>
-        <TopBar left={<BackLink href="/" label="Cancel" />} />
-        <Body>
+        <TopBar left={<BackLink href="/" label="Cancel" />} width="medium" />
+        <Body width="medium">
           {loadError === "offline" ? <OfflineBanner onRetry={() => { setLoadError(null); fetchQuestions(); }} />
             : loadError ? <ErrorNotice>{loadError}</ErrorNotice>
             : <Loading label="Loading questions…" />}
@@ -140,14 +140,14 @@ function Assess() {
     );
   }
 
-  const codeBar = <TopBar left={<TopTitle>New assessment</TopTitle>} right={<Code>{ref}</Code>} />;
+  const codeBar = <TopBar left={<TopTitle>New assessment</TopTitle>} right={<Code>{ref}</Code>} width="narrow" />;
 
   /* ---------- sending ---------- */
   if (phase === "checking") {
     return (
       <>
         {codeBar}
-        <Body>
+        <Body width="narrow">
           <div role="status" className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
             <span className="h-16 w-16 animate-spin rounded-full border-[6px] border-track border-t-blue" aria-hidden />
             <p className="text-title font-bold">Checking answers…</p>
@@ -162,7 +162,7 @@ function Assess() {
     return (
       <>
         {codeBar}
-        <Body>
+        <Body width="narrow">
           <OfflineBanner large />
           <div className="flex items-start gap-3 rounded-xl bg-green-tint p-4 text-body">
             <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-green text-small font-bold text-white">✓</span>
@@ -172,7 +172,7 @@ function Assess() {
             If the patient has a danger sign, do not wait for the result. Refer to the nearest health facility now.
           </p>
         </Body>
-        <BottomBar>
+        <BottomBar width="narrow" className="md:flex-row-reverse md:[&>*]:flex-1">
           <Button onClick={submit}>Try again</Button>
           <Button variant="secondary" onClick={() => setPhase("form")}>Back to questions</Button>
         </BottomBar>
@@ -184,9 +184,9 @@ function Assess() {
   if (step === 0) {
     return (
       <>
-        <TopBar left={<div className="flex items-center"><BackLink label="Cancel" onClick={cancel} /><TopTitle>New assessment</TopTitle></div>} />
-        <StepHeader title="Patient" step={1} total={totalSteps} />
-        <Body className="gap-6">
+        <TopBar left={<div className="flex items-center"><BackLink label="Cancel" onClick={cancel} /><TopTitle>New assessment</TopTitle></div>} width="narrow" />
+        <StepHeader title="Patient" step={1} total={totalSteps} width="narrow" />
+        <Body className="gap-6" width="narrow">
           <Field label="Patient code" error={patientErrors.ref && !ref ? patientErrors.ref : null}
             help={<span className="flex items-start gap-2 text-ink"><span aria-hidden className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-ink text-[12px] font-bold">!</span><span>Use a code only. <b>Never</b> write the patient&apos;s name or ID number.</span></span>}>
             <input className={`${inputClass(!!patientErrors.ref && !ref, true)} text-heading font-bold`} value={patientRef}
@@ -194,7 +194,7 @@ function Assess() {
           </Field>
           <fieldset className="flex flex-col gap-2">
             <legend className="mb-2 text-label font-bold">Age (years)</legend>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {AGE_BANDS.map((b) => (
                 <ChoiceTile key={b.value} selected={ageBand === b.value} onClick={() => update({ ageBand: b.value })}>{b.label}</ChoiceTile>
               ))}
@@ -210,7 +210,7 @@ function Assess() {
             {patientErrors.sex && !sex && <FieldError>{patientErrors.sex}</FieldError>}
           </fieldset>
         </Body>
-        <BottomBar><Button onClick={toQuestions}>Next: questions →</Button></BottomBar>
+        <BottomBar width="narrow"><Button onClick={toQuestions}>Next: questions →</Button></BottomBar>
       </>
     );
   }
@@ -233,45 +233,47 @@ function Assess() {
 
   return (
     <>
-      <TopBar left={<BackLink label={step === 1 ? "Patient" : "Back"} onClick={() => update({ step: step - 1 })} />} right={<Code>{ref}</Code>} />
-      <StepHeader title={`Questions ${first}–${first + page.length - 1} of ${questions.length}`} step={step + 1} total={totalSteps} />
+      <TopBar left={<BackLink label={step === 1 ? "Patient" : "Back"} onClick={() => update({ step: step - 1 })} />} right={<Code>{ref}</Code>} width="medium" />
+      <StepHeader title={`Questions ${first}–${first + page.length - 1} of ${questions.length}`} step={step + 1} total={totalSteps} width="medium" />
       <main className="flex-1 px-4">
-        {page.map((q, i) => {
-          const value = answers[q.code];
-          const warn = q.is_danger_sign && value === "yes";
-          return (
-            <div key={q.code} role="group" aria-labelledby={`q-${q.code}`} className="border-b border-divider py-5">
-              <div className={`flex flex-col gap-3 ${warn ? "rounded-xl border-2 border-red p-3" : ""}`}>
-                {q.is_danger_sign && (
-                  <span className="flex items-center gap-2 text-small font-bold text-red">
-                    <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-red" />Danger sign
-                  </span>
-                )}
-                <p id={`q-${q.code}`} className="flex gap-2 text-question">
-                  <b className="min-w-7 text-ink-soft">{first + i}</b>
-                  <span>{q.text}</span>
-                </p>
-                <div className="grid grid-cols-[1fr_1fr_1.3fr] gap-2">
-                  {ANSWERS.map((a) => (
-                    <button key={a.value} type="button" aria-pressed={value === a.value} onClick={() => setAnswer(q.code, a.value)}
-                      className={`h-14 rounded-[10px] border-2 px-1 text-label font-bold ${value === a.value ? a.on : "border-edge bg-white text-ink"}`}>
-                      {value === a.value && "✓ "}{a.label}
-                    </button>
-                  ))}
-                </div>
-                {warn && (
-                  <div className="flex items-start gap-2.5 rounded-[10px] bg-red-tint p-3 text-small">
-                    <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-md bg-red font-bold text-white">!</span>
-                    <span><b>Danger sign.</b> The result will tell you to refer urgently.</span>
+        <div className={contained("medium")}>
+          {page.map((q, i) => {
+            const value = answers[q.code];
+            const warn = q.is_danger_sign && value === "yes";
+            return (
+              <div key={q.code} role="group" aria-labelledby={`q-${q.code}`} className="border-b border-divider py-5">
+                <div className={`flex flex-col gap-3 ${warn ? "rounded-xl border-2 border-red p-3" : ""}`}>
+                  {q.is_danger_sign && (
+                    <span className="flex items-center gap-2 text-small font-bold text-red">
+                      <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-red" />Danger sign
+                    </span>
+                  )}
+                  <p id={`q-${q.code}`} className="flex gap-2 text-question">
+                    <b className="min-w-7 text-ink-soft">{first + i}</b>
+                    <span>{q.text}</span>
+                  </p>
+                  <div className="grid grid-cols-[1fr_1fr_1.3fr] gap-2 md:max-w-lg md:pl-9">
+                    {ANSWERS.map((a) => (
+                      <button key={a.value} type="button" aria-pressed={value === a.value} onClick={() => setAnswer(q.code, a.value)}
+                        className={`h-14 rounded-[10px] border-2 px-1 text-label font-bold ${value === a.value ? a.on : "border-edge bg-white text-ink"}`}>
+                        {value === a.value && "✓ "}{a.label}
+                      </button>
+                    ))}
                   </div>
-                )}
+                  {warn && (
+                    <div className="flex items-start gap-2.5 rounded-[10px] bg-red-tint p-3 text-small">
+                      <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-md bg-red font-bold text-white">!</span>
+                      <span><b>Danger sign.</b> The result will tell you to refer urgently.</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-        {submitError && last && <div className="py-4"><ErrorNotice>{submitError}</ErrorNotice></div>}
+            );
+          })}
+          {submitError && last && <div className="py-4"><ErrorNotice>{submitError}</ErrorNotice></div>}
+        </div>
       </main>
-      <BottomBar>
+      <BottomBar width="medium">
         <p className="text-center text-small text-ink-soft">
           {complete ? `All ${page.length} answered` : `${answered} of ${page.length} answered · answer all to continue`}
         </p>
@@ -286,14 +288,16 @@ function Assess() {
   );
 }
 
-function StepHeader({ title, step, total }: { title: string; step: number; total: number }) {
+function StepHeader({ title, step, total, width }: { title: string; step: number; total: number; width: Width }) {
   return (
-    <div className="flex flex-none flex-col gap-2 border-b border-divider px-4 py-3">
-      <div className="flex justify-between text-small">
-        <b>{title}</b>
-        <span className="text-ink-soft">Step {step} of {total}</span>
+    <div className="flex-none border-b border-divider px-4 py-3">
+      <div className={`flex flex-col gap-2 ${contained(width)}`}>
+        <div className="flex justify-between text-small">
+          <b>{title}</b>
+          <span className="text-ink-soft">Step {step} of {total}</span>
+        </div>
+        <ProgressBar value={step / total} />
       </div>
-      <ProgressBar value={step / total} />
     </div>
   );
 }

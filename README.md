@@ -42,6 +42,10 @@ Production build: `npm run build && npm start`. Lint: `npm run lint`.
 Every result follows the same order: what was found, what to do (the largest block, coloured
 by referral level), supporting detail, then the disclaimer. Red is used only for urgent referral.
 
+Phones get the design as drawn. From 768px wide (tablets, laptops) each page centres its content,
+and from 1024px home and results switch to two columns, so a supervisor at a computer or a
+projected demo sees a full-size layout.
+
 Answers are saved on the phone while the assessment is in progress, so a dropped connection
 never means asking the patient again. They are cleared once the result is saved, or on Cancel.
 

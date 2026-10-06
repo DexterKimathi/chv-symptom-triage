@@ -7,21 +7,34 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 /* ---------- page frame ---------- */
 
-export function TopBar({ left, right }: { left: ReactNode; right?: ReactNode }) {
+// Phones get the design as drawn: one full-width column. From 768px up, each page centres
+// its content at a width that suits it, and the bars line up with that content.
+export type Width = "narrow" | "medium" | "wide";
+const WIDTH: Record<Width, string> = {
+  narrow: "md:max-w-xl",
+  medium: "md:max-w-3xl",
+  wide: "md:max-w-6xl",
+};
+export const contained = (width: Width) => `w-full md:mx-auto ${WIDTH[width]}`;
+
+export function TopBar({ left, right, width = "wide" }: { left: ReactNode; right?: ReactNode; width?: Width }) {
   return (
-    <header className="flex h-14 flex-none items-center justify-between border-b border-divider pr-4 pl-1">
-      {left}
-      {right}
+    <header className="flex-none border-b border-divider bg-white md:px-4">
+      <div className={`flex h-14 items-center justify-between pr-4 pl-1 md:h-16 md:px-0 ${contained(width)}`}>
+        {left}
+        {right}
+      </div>
     </header>
   );
 }
 
 export function TopTitle({ children }: { children: ReactNode }) {
-  return <h1 className="px-3 text-label font-bold">{children}</h1>;
+  return <h1 className="px-3 text-label font-bold md:px-0">{children}</h1>;
 }
 
 export function BackLink({ href, label, onClick }: { href?: string; label: string; onClick?: () => void }) {
-  const className = "flex h-12 items-center rounded-lg px-3 text-label font-bold text-blue hover:text-blue-dark";
+  // On wide screens the arrow lines up with the content edge; the tap area still extends left.
+  const className = "flex h-12 items-center rounded-lg px-3 text-label font-bold text-blue hover:text-blue-dark md:-ml-3";
   if (href) return <Link href={href} className={className} onClick={onClick}>← {label}</Link>;
   return <button type="button" className={className} onClick={onClick}>← {label}</button>;
 }
@@ -30,15 +43,19 @@ export function Code({ children, className = "" }: { children: ReactNode; classN
   return <span className={`font-mono text-label font-bold ${className}`}>{children}</span>;
 }
 
-export function Body({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`flex flex-1 flex-col gap-5 px-4 py-5 ${className}`}>{children}</div>;
+export function Body({ children, className = "", width = "wide" }: { children: ReactNode; className?: string; width?: Width }) {
+  return (
+    <div className="flex flex-1 flex-col px-4 py-5 md:py-8">
+      <div className={`flex flex-1 flex-col gap-5 ${contained(width)} ${className}`}>{children}</div>
+    </div>
+  );
 }
 
 /** Actions pinned to the bottom of the screen, above the phone's own buttons. */
-export function BottomBar({ children }: { children: ReactNode }) {
+export function BottomBar({ children, width = "wide", className = "" }: { children: ReactNode; width?: Width; className?: string }) {
   return (
-    <div className="sticky bottom-0 flex flex-none flex-col gap-2 border-t border-divider bg-white px-4 pt-2.5 pb-4">
-      {children}
+    <div className="sticky bottom-0 flex-none border-t border-divider bg-white px-4 pt-2.5 pb-4 md:py-4">
+      <div className={`flex flex-col gap-2 ${contained(width)} ${className}`}>{children}</div>
     </div>
   );
 }

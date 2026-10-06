@@ -66,8 +66,8 @@ function Admin() {
   if (created) {
     return (
       <>
-        <TopBar left={<BackLink href="/" label="Back" />} right={AdminBadge} />
-        <Body>
+        <TopBar left={<BackLink href="/" label="Back" />} right={AdminBadge} width="narrow" />
+        <Body width="narrow">
           <div role="status" className="flex flex-col gap-3 rounded-xl border-2 border-green bg-green-tint p-4">
             <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-green text-heading font-bold text-white">✓</span>
             <p className="text-title font-bold">Volunteer added</p>
@@ -82,7 +82,7 @@ function Admin() {
           </dl>
           <p className="text-body text-ink-soft">They can log in now with this phone number and the password you set.</p>
         </Body>
-        <BottomBar>
+        <BottomBar width="narrow" className="md:flex-row md:[&>*]:flex-1">
           <Button onClick={addAnother}>Add another volunteer</Button>
           <ButtonLink href="/" variant="secondary">Done</ButtonLink>
         </BottomBar>
@@ -92,9 +92,9 @@ function Admin() {
 
   return (
     <>
-      <TopBar left={<BackLink href="/" label="Back" />} right={AdminBadge} />
+      <TopBar left={<BackLink href="/" label="Back" />} right={AdminBadge} width="narrow" />
       <form onSubmit={submit} noValidate className="flex flex-1 flex-col">
-        <Body>
+        <Body width="narrow">
           <h1 className="text-title font-bold">Add volunteer</h1>
           {offline && <OfflineBanner />}
           {errors.form && <ErrorNotice>{errors.form}</ErrorNotice>}
@@ -113,7 +113,7 @@ function Admin() {
             <input className={inputClass()} value={form.area} onChange={set("area")} placeholder="e.g. Kilifi North" />
           </Field>
         </Body>
-        <BottomBar><Button type="submit" loading={busy}>{busy ? "Creating…" : "Create volunteer"}</Button></BottomBar>
+        <BottomBar width="narrow"><Button type="submit" loading={busy}>{busy ? "Creating…" : "Create volunteer"}</Button></BottomBar>
       </form>
     </>
   );

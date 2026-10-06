@@ -34,8 +34,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${atkinson.variable} ${atkinsonMono.variable} antialiased`}>
       <body className="bg-canvas font-sans text-ink">
-        {/* Phone-width column; on a wider screen it sits centred on the grey canvas. */}
-        <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-white">
+        {/* Phone-width column up to 768px; from there each page lays out for the wider screen. */}
+        <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col bg-white md:max-w-none">
           <AuthProvider>{children}</AuthProvider>
         </div>
       </body>

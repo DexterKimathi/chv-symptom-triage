@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 
-import { Alert, BackLink, BottomBar, ButtonLink, Code, Disclaimer, ErrorNotice, Loading, OfflineBanner, TopBar, TopTitle } from "./ui";
+import { Alert, BackLink, BottomBar, ButtonLink, Code, contained, Disclaimer, ErrorNotice, Loading, OfflineBanner, TopBar, TopTitle } from "./ui";
 import { api, NetworkError } from "@/lib/api";
 import { useAuth, useSessionGuard } from "@/lib/auth";
 import { ageLabel, fullWhen, percent, sexLabel, whenLabel } from "@/lib/format";
@@ -58,7 +58,7 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
     return (
       <>
         {homeBar}
-        <main className="flex flex-1 flex-col px-4 py-5">
+        <main className={`flex flex-1 flex-col px-4 py-5 md:py-8 ${contained("wide")}`}>
           {error === "offline" ? <OfflineBanner onRetry={() => { setError(null); setAttempt((n) => n + 1); }} />
             : error ? <ErrorNotice>{error}</ErrorNotice>
             : <Loading label="Loading result…" />}
@@ -76,45 +76,57 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
       {(saved || !urgent) && homeBar}
       {saved && (
         <div className="border-b border-divider bg-surface px-4 py-3 text-small">
-          <p className="font-bold">Saved record · cannot be changed</p>
-          <p className="text-ink-soft">Shown exactly as on {fullWhen(result.created_at)} · model {result.model_version}</p>
+          <div className={contained("wide")}>
+            <p className="font-bold">Saved record · cannot be changed</p>
+            <p className="text-ink-soft">Shown exactly as on {fullWhen(result.created_at)} · model {result.model_version}</p>
+          </div>
         </div>
       )}
 
       {urgent ? (
-        <div role="alert" className="flex flex-col gap-3 bg-red px-4 pt-4 pb-5 text-white">
-          {!saved && (
-            <div className="flex items-start justify-between gap-3 text-small">
-              <Code className="whitespace-nowrap">{result.patient_ref}</Code><span className="text-right">{meta}</span>
+        <div role="alert" className="bg-red px-4 pt-4 pb-5 text-white md:py-8">
+          <div className={`flex flex-col gap-3 ${contained("wide")}`}>
+            {!saved && (
+              <div className="flex items-start justify-between gap-3 text-small">
+                <Code className="whitespace-nowrap">{result.patient_ref}</Code><span className="text-right">{meta}</span>
+              </div>
+            )}
+            {saved && <p className="text-small">{meta}</p>}
+            <div className="flex items-start gap-3">
+              <Alert size={48} inverse />
+              <p className="text-display font-bold">Refer urgently now</p>
             </div>
-          )}
-          {saved && <p className="text-small">{meta}</p>}
-          <div className="flex items-start gap-3">
-            <Alert size={48} inverse />
-            <p className="text-display font-bold">Refer urgently now</p>
+            <p className="text-body md:max-w-3xl">{result.guidance}</p>
           </div>
-          <p className="text-body">{result.guidance}</p>
         </div>
       ) : null}
 
-      <main className="flex flex-1 flex-col gap-5 px-4 py-5">
-        {urgent ? (
-          <section className="flex flex-col gap-3">
-            <h2 className="text-label font-bold">{dangerTexts.length > 1 ? "Danger signs found" : "Danger sign found"}</h2>
-            {dangerTexts.map((text) => (
-              <div key={text} className="flex items-start gap-3 rounded-xl border-2 border-red bg-red-tint p-3 text-body">
-                <Alert />
-                <p>{text}<br /><b>Yes</b></p>
-              </div>
-            ))}
-          </section>
-        ) : (
-          <>
-            <p className="text-small text-ink-soft">{meta}</p>
-            <Finding result={result} />
-            <WhatToDo level={result.referral_level} guidance={result.guidance} />
-            {result.outcome === "likely_condition" && <LessLikely result={result} />}
-            {result.explanation.length > 0 && (
+      {/* Two columns on a laptop: the finding and what to do on the left, detail on the right.
+          On a phone the same blocks stack in the design's order. */}
+      <main className="flex-1 px-4 py-5 md:py-8">
+        <div className={`flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12 ${contained("wide")}`}>
+          <div className="flex flex-col gap-5">
+            {urgent ? (
+              <section className="flex flex-col gap-3">
+                <h2 className="text-label font-bold">{dangerTexts.length > 1 ? "Danger signs found" : "Danger sign found"}</h2>
+                {dangerTexts.map((text) => (
+                  <div key={text} className="flex items-start gap-3 rounded-xl border-2 border-red bg-red-tint p-3 text-body">
+                    <Alert />
+                    <p>{text}<br /><b>Yes</b></p>
+                  </div>
+                ))}
+              </section>
+            ) : (
+              <>
+                <p className="text-small text-ink-soft">{meta}</p>
+                <Finding result={result} />
+                <WhatToDo level={result.referral_level} guidance={result.guidance} />
+              </>
+            )}
+          </div>
+          <div className="flex flex-col gap-5">
+            {!urgent && result.outcome === "likely_condition" && <LessLikely result={result} />}
+            {!urgent && result.explanation.length > 0 && (
               <section>
                 <h2 className="text-label font-bold">Based on:</h2>
                 {result.explanation.map((e) => (
@@ -127,12 +139,16 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
                 ))}
               </section>
             )}
-          </>
-        )}
-        <Disclaimer text={result.disclaimer} />
+            <Disclaimer text={result.disclaimer} />
+          </div>
+        </div>
       </main>
 
-      {!saved && <BottomBar><ButtonLink href="/" variant="secondary">Done, back to home</ButtonLink></BottomBar>}
+      {!saved && (
+        <BottomBar className="md:items-end md:[&>*]:max-w-sm">
+          <ButtonLink href="/" variant="secondary">Done, back to home</ButtonLink>
+        </BottomBar>
+      )}
     </>
   );
 }
