@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { Button, ErrorNotice, Field, inputClass, PasswordInput } from "@/components/ui";
-import { ApiError, NetworkError } from "@/lib/api";
+import { ApiError, connectionMessage, NetworkError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { normalisePhone } from "@/lib/format";
 
 export default function LoginPage() {
   const { login, session, ready } = useAuth();
@@ -25,7 +26,8 @@ export default function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      await login(phone.replace(/\s/g, ""), password);
+      // Accounts are stored as 07…, so +254 7… logs in too, whichever backend version runs.
+      await login(normalisePhone(phone) ?? phone.replace(/\s/g, ""), password);
       router.replace("/");
     } catch (e) {
       if (e instanceof NetworkError) setError("offline");
@@ -47,7 +49,7 @@ export default function LoginPage() {
         {error && (
           <ErrorNotice>
             {error === "wrong" ? <><b>Phone number or password is not correct.</b> Check both and try again.</>
-              : error === "offline" ? <><b>No internet connection, please try again.</b> Move to a spot with better signal.</>
+              : error === "offline" ? <><b>{connectionMessage()}</b> Move to a spot with better signal.</>
               : error}
           </ErrorNotice>
         )}

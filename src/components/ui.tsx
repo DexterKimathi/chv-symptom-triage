@@ -3,6 +3,8 @@
 // word or a symbol.
 
 import Link from "next/link";
+
+import { connectionMessage } from "@/lib/api";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 /* ---------- page frame ---------- */
@@ -139,7 +141,7 @@ export function OfflineBanner({ detail, onRetry, large = false }: { detail?: str
       <div className={large ? "flex flex-col gap-3" : "flex items-start gap-2.5"}>
         <span aria-hidden className={`flex flex-none items-center justify-center rounded-full bg-white font-bold text-ink ${large ? "h-10 w-10 text-heading" : "h-6 w-6 text-small"}`}>!</span>
         <div>
-          <p className={large ? "text-headline font-bold" : "text-label font-bold"}>No internet connection, please try again</p>
+          <p className={large ? "text-headline font-bold" : "text-label font-bold"}>{connectionMessage()}</p>
           {detail && <p className="mt-1 text-small">{detail}</p>}
         </div>
       </div>

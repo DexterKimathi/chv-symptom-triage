@@ -26,7 +26,29 @@ npm run dev
 Opens on http://localhost:3000. The backend must be running on port 8000 (see the backend
 README). Demo logins come from the backend's `scripts/seed.py`.
 
-Production build: `npm run build && npm start`. Lint: `npm run lint`.
+Production build: `npm run build && npm start`. The build stops with an error if
+`NEXT_PUBLIC_API_BASE_URL` is not set (in `.env.local`, `.env.production` or the shell),
+because the backend address is written into the app at build time. `npm run dev` falls back
+to http://localhost:8000.
+
+Checks: `npm run lint`, then `npx next typegen && npx tsc --noEmit`. Run `next typegen` (or
+`npm run build`) first: `tsc` alone reports `Cannot find name 'LayoutProps'` on a fresh
+checkout, because Next.js generates that type.
+
+## Backend version and CORS
+
+This app needs a backend that includes
+[ucs31-kimathi-backend#20](https://github.com/RAM-AS-RAP/ucs31-kimathi-backend/pull/20)
+(volunteer name on login; patient code, age group and sex on results) and
+[#21](https://github.com/RAM-AS-RAP/ucs31-kimathi-backend/pull/21) (Kenyan phone numbers,
+timestamps in UTC with a `Z`). Merge order: backend #20, backend #21, then this frontend.
+On an older backend the app still runs, but results show "Sex not recorded" and similar,
+and times are three hours early in Kenya.
+
+The browser only lets the app call the backend if the backend lists the app's address.
+Set `CORS_ORIGINS` in the backend's `.env` to the exact origin the app is opened from,
+comma-separated if more than one: `http://localhost:3000` (the default) in development,
+and the deployed frontend URL in production. A different port counts as a different origin.
 
 ## Screens
 

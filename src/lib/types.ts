@@ -47,9 +47,11 @@ export interface AssessmentRequest {
 
 export interface Assessment {
   id: number;
-  patient_ref: string;
-  age_band: AgeBand;
-  sex: Sex;
+  // Added to the backend in ucs31-kimathi-backend#20. Older backends leave them out, so the
+  // screens must never assume they are there.
+  patient_ref?: string | null;
+  age_band?: AgeBand | null;
+  sex?: Sex | null;
   outcome: Outcome;
   headline: string;
   danger_sign_triggered: boolean;

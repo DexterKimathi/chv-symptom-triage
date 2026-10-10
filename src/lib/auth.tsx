@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore, type ReactNode } from "react";
 
 import { api, ApiError } from "./api";
+import { clearDraft, clearDraftUnlessOwnedBy } from "./draft";
 import type { Role } from "./types";
 
 const STORAGE_KEY = "chv-triage-session";
@@ -21,9 +22,14 @@ interface Session {
 
 interface AuthState {
   session: Session | null;
+  /** The account id from the token, used to keep each volunteer's draft separate. */
+  userId: string | null;
   ready: boolean;
   login: (phone: string, password: string) => Promise<void>;
+  /** The volunteer chose to log out: the session and any unfinished assessment are removed. */
   logout: () => void;
+  /** The token expired: the session ends, but the draft is kept for when the same volunteer logs back in. */
+  endSession: () => void;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -72,6 +78,17 @@ function getSnapshot(): Session | null {
   return cached.session;
 }
 
+/** The account id ("sub") inside the token. Read only to label the draft; the backend checks the token. */
+export function userIdFromToken(token: string): string | null {
+  try {
+    const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const sub = (JSON.parse(atob(payload)) as { sub?: unknown }).sub;
+    return sub === undefined || sub === null ? null : String(sub);
+  } catch {
+    return null;
+  }
+}
+
 // On the server there is no storage yet, so the session is "not known" rather than empty.
 const getServerSnapshot = () => undefined;
 
@@ -79,15 +96,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const snapshot = useSyncExternalStore<Session | null | undefined>(subscribe, getSnapshot, getServerSnapshot);
   const session = snapshot ?? null;
   const ready = snapshot !== undefined;
+  const userId = session ? userIdFromToken(session.token) : null;
 
   const login = useCallback(async (phone: string, password: string) => {
     const result = await api.login(phone, password);
+    // A draft left on this phone by someone else must never reach the new volunteer.
+    clearDraftUnlessOwnedBy(userIdFromToken(result.access_token));
     write({ token: result.access_token, role: result.role, name: result.name, area: result.area });
   }, []);
 
-  const logout = useCallback(() => write(null), []);
+  const logout = useCallback(() => {
+    clearDraft();
+    write(null);
+  }, []);
 
-  return <AuthContext.Provider value={{ session, ready, login, logout }}>{children}</AuthContext.Provider>;
+  const endSession = useCallback(() => write(null), []);
+
+  return <AuthContext.Provider value={{ session, userId, ready, login, logout, endSession }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthState {
@@ -111,19 +136,20 @@ export function RequireAuth({ children, adminOnly = false }: { children: ReactNo
   return <>{children}</>;
 }
 
-/** An expired or rejected token logs the volunteer out instead of failing silently. */
+/** An expired or rejected token logs the volunteer out instead of failing silently. Their
+ *  unfinished assessment is kept, and comes back only when the same account logs in again. */
 export function useSessionGuard() {
-  const { logout } = useAuth();
+  const { endSession } = useAuth();
   const router = useRouter();
   return useCallback(
     (error: unknown) => {
       if (error instanceof ApiError && error.status === 401) {
-        logout();
+        endSession();
         router.replace("/login");
         return true;
       }
       return false;
     },
-    [logout, router],
+    [endSession, router],
   );
 }

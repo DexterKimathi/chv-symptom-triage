@@ -9,38 +9,10 @@ import {
 } from "@/components/ui";
 import { api, NetworkError } from "@/lib/api";
 import { RequireAuth, useAuth, useSessionGuard } from "@/lib/auth";
-import { AGE_BANDS, type AgeBand, type Answer, type Question, type Sex } from "@/lib/types";
+import { clearDraft, loadDraft, reconcileDraft, saveDraft, type Draft } from "@/lib/draft";
+import { AGE_BANDS, type Answer, type Question } from "@/lib/types";
 
 const PAGE_SIZE = 5;
-
-// Answers are kept on the phone as they are given, so a dropped connection or a closed
-// tab never means asking the patient again. Cleared on a saved result or on Cancel.
-const DRAFT_KEY = "chv-triage-draft";
-
-interface Draft {
-  patientRef: string;
-  ageBand: AgeBand | null;
-  sex: Sex | null;
-  answers: Record<string, Answer>;
-  step: number;
-}
-
-const EMPTY: Draft = { patientRef: "", ageBand: null, sex: null, answers: {}, step: 0 };
-
-function loadDraft(): Draft {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    return raw ? { ...EMPTY, ...JSON.parse(raw) } : EMPTY;
-  } catch {
-    return EMPTY;
-  }
-}
-
-function clearDraft() {
-  try {
-    localStorage.removeItem(DRAFT_KEY);
-  } catch {}
-}
 
 const ANSWERS: { value: Answer; label: string; on: string }[] = [
   { value: "yes", label: "Yes", on: "border-blue bg-blue text-white" },
@@ -49,12 +21,13 @@ const ANSWERS: { value: Answer; label: string; on: string }[] = [
 ];
 
 function Assess() {
-  const { session } = useAuth();
+  const { session, userId } = useAuth();
   const guard = useSessionGuard();
   const router = useRouter();
 
   // RequireAuth only renders this on the client, so reading storage here is safe.
-  const [draft, setDraft] = useState<Draft>(loadDraft);
+  // Only this volunteer's own draft is restored.
+  const [draft, setDraft] = useState<Draft>(() => loadDraft(userId));
   const [questions, setQuestions] = useState<Question[] | null>(null);
   const [loadError, setLoadError] = useState<"offline" | string | null>(null);
   const [phase, setPhase] = useState<"form" | "checking" | "offline">("form");
@@ -64,16 +37,15 @@ function Assess() {
   const { patientRef, ageBand, sex, answers, step } = draft;
   const update = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-    } catch {}
-  }, [draft]);
+  useEffect(() => saveDraft(draft), [draft]);
 
   const fetchQuestions = useCallback(() => {
     if (!session) return;
     api.questions(session.token)
-      .then(setQuestions)
+      .then((list) => {
+        setDraft((d) => reconcileDraft(d, list, PAGE_SIZE));
+        setQuestions(list);
+      })
       .catch((e) => { if (!guard(e)) setLoadError(e instanceof NetworkError ? "offline" : e.message); });
   }, [session, guard]);
 
@@ -217,6 +189,15 @@ function Assess() {
 
   /* ---------- steps 2 to 8: five questions each ---------- */
   const page = pages[step - 1];
+  if (!page) {
+    // Only possible if the backend sent no questions; never index past the last page.
+    return (
+      <>
+        <TopBar left={<BackLink href="/" label="Cancel" />} width="medium" />
+        <Body width="medium"><ErrorNotice>No questions were loaded. Please try again later.</ErrorNotice></Body>
+      </>
+    );
+  }
   const first = (step - 1) * PAGE_SIZE + 1;
   const answered = page.filter((q) => answers[q.code]).length;
   const complete = answered === page.length;

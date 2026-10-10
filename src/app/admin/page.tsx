@@ -5,11 +5,16 @@ import { useState, type FormEvent } from "react";
 import { BackLink, Body, BottomBar, Button, ButtonLink, ErrorNotice, Field, inputClass, OfflineBanner, PasswordInput, TopBar } from "@/components/ui";
 import { api, ApiError, NetworkError } from "@/lib/api";
 import { RequireAuth, useAuth, useSessionGuard } from "@/lib/auth";
-import { phoneLabel } from "@/lib/format";
+import { normalisePhone, phoneLabel } from "@/lib/format";
 import type { User } from "@/lib/types";
 
 const EMPTY = { name: "", phone: "", password: "", area: "" };
 type Errors = Partial<Record<keyof typeof EMPTY | "form", string>>;
+
+// bcrypt on the backend uses at most 72 bytes; letters such as é take two.
+const tooLongForBackend = (password: string) => new TextEncoder().encode(password).length > 72;
+
+const FIELDS = ["name", "phone", "password", "area"] as const;
 
 const AdminBadge = <span className="rounded-md bg-ink px-2 py-1 text-small font-bold text-white">Admin</span>;
 
@@ -28,8 +33,11 @@ function Admin() {
   function validate(): Errors {
     const out: Errors = {};
     if (!form.name.trim()) out.name = "Enter their full name.";
-    if (form.phone.replace(/\D/g, "").length < 7) out.phone = "Enter a phone number.";
+    else if (form.name.trim().length > 120) out.name = "Use at most 120 characters.";
+    if (!normalisePhone(form.phone)) out.phone = "Enter a Kenyan mobile number, such as 0712 345 678 or +254 712 345 678.";
     if (form.password.length < 8) out.password = "Use at least 8 characters.";
+    else if (tooLongForBackend(form.password)) out.password = "Too long. Use at most 72 characters (letters like é count as two).";
+    if (form.area.trim().length > 120) out.area = "Use at most 120 characters.";
     return out;
   }
 
@@ -43,7 +51,7 @@ function Admin() {
     setBusy(true);
     try {
       const user = await api.createUser(session.token, {
-        name: form.name.trim(), phone: form.phone.replace(/\s/g, ""), password: form.password,
+        name: form.name.trim(), phone: normalisePhone(form.phone) ?? form.phone, password: form.password,
         area: form.area.trim() || undefined, role: "chv",
       });
       setCreated(user);
@@ -51,6 +59,10 @@ function Admin() {
       if (guard(e)) return;
       if (e instanceof NetworkError) setOffline(true);
       else if (e instanceof ApiError && e.status === 409) setErrors({ phone: "This phone number is already registered." });
+      else if (e instanceof ApiError && e.status === 422 && FIELDS.some((f) => e.fields[f])) {
+        // Show each backend message under its own field.
+        setErrors(Object.fromEntries(FIELDS.filter((f) => e.fields[f]).map((f) => [f, e.fields[f]])));
+      }
       else setErrors({ form: e instanceof Error ? e.message : "Could not add the volunteer." });
     } finally {
       setBusy(false);
@@ -105,12 +117,12 @@ function Admin() {
             <input className={inputClass(!!errors.phone, true)} type="tel" inputMode="tel" placeholder="07XX XXX XXX"
               value={form.phone} onChange={set("phone")} autoComplete="off" />
           </Field>
-          <Field label="Password" error={errors.password} help="At least 8 characters. Share it with them in person.">
+          <Field label="Password" error={errors.password} help="8 to 72 characters. Share it with them in person.">
             <PasswordInput value={form.password} onChange={(v) => setForm((f) => ({ ...f, password: v }))}
               show={showPassword} onToggle={() => setShowPassword((s) => !s)} invalid={!!errors.password} autoComplete="new-password" />
           </Field>
-          <Field label="Area">
-            <input className={inputClass()} value={form.area} onChange={set("area")} placeholder="e.g. Kilifi North" />
+          <Field label="Area" error={errors.area}>
+            <input className={inputClass(!!errors.area)} value={form.area} onChange={set("area")} placeholder="e.g. Kilifi North" />
           </Field>
         </Body>
         <BottomBar width="narrow"><Button type="submit" loading={busy}>{busy ? "Creating…" : "Create volunteer"}</Button></BottomBar>

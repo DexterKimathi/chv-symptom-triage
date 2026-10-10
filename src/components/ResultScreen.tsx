@@ -7,9 +7,9 @@
 import { useEffect, useState } from "react";
 
 import { Alert, BackLink, BottomBar, ButtonLink, Code, contained, Disclaimer, ErrorNotice, Loading, OfflineBanner, TopBar, TopTitle } from "./ui";
-import { api, NetworkError } from "@/lib/api";
+import { api, ApiError, NetworkError } from "@/lib/api";
 import { useAuth, useSessionGuard } from "@/lib/auth";
-import { ageLabel, fullWhen, percent, sexLabel, whenLabel } from "@/lib/format";
+import { ageLabel, fullWhen, percent, refLabel, sexLabel, whenLabel } from "@/lib/format";
 import type { Answer, Assessment } from "@/lib/types";
 
 /** Each referral level gets one band colour. Red is reserved for urgent referral. */
@@ -19,6 +19,11 @@ const REFERRAL: Record<string, { title: string; head: string; body: string }> = 
   refer_for_assessment: { title: "Refer for assessment", head: "bg-blue text-white", body: "border-blue bg-blue-tint" },
   home_care_and_monitor: { title: "Care at home and watch", head: "bg-green text-white", body: "border-green bg-green-tint" },
 };
+
+const NOT_FOUND = "Assessment not found";
+
+/** Assessment ids are whole numbers from 1 up to the database's integer limit. */
+const isAssessmentId = (id: string) => /^[1-9]\d{0,9}$/.test(id) && Number(id) <= 2_147_483_647;
 
 const ANSWER_LABEL: Record<Answer, string> = { yes: "Yes", no: "No", unknown: "Not asked" };
 
@@ -43,16 +48,35 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
 
   const [attempt, setAttempt] = useState(0);
 
+  // A mistyped or edited link is "not found", not a validation message from the server.
+  const validId = isAssessmentId(id);
+
   useEffect(() => {
-    if (!session) return;
+    if (!session || !validId) return;
     fetchResult(session.token, id)
       .then(({ assessment, dangerTexts }) => { setDangerTexts(dangerTexts); setResult(assessment); })
-      .catch((e) => { if (!guard(e)) setError(e instanceof NetworkError ? "offline" : (e as Error).message); });
-  }, [session, id, guard, attempt]);
+      .catch((e) => {
+        if (guard(e)) return;
+        if (e instanceof NetworkError) setError("offline");
+        else if (e instanceof ApiError && (e.status === 404 || e.status === 422)) setError(NOT_FOUND);
+        else setError((e as Error).message);
+      });
+  }, [session, id, validId, guard, attempt]);
 
   const homeBar = saved
-    ? <TopBar left={<BackLink href="/" label="Home" />} right={result && <Code>{result.patient_ref}</Code>} />
-    : <TopBar left={<TopTitle>Result</TopTitle>} right={result && <Code>{result.patient_ref}</Code>} />;
+    ? <TopBar left={<BackLink href="/" label="Home" />} right={result && <Code>{refLabel(result.patient_ref)}</Code>} />
+    : <TopBar left={<TopTitle>Result</TopTitle>} right={result && <Code>{refLabel(result.patient_ref)}</Code>} />;
+
+  if (!validId) {
+    return (
+      <>
+        {homeBar}
+        <main className={`flex flex-1 flex-col px-4 py-5 md:py-8 ${contained("wide")}`}>
+          <ErrorNotice>{NOT_FOUND}</ErrorNotice>
+        </main>
+      </>
+    );
+  }
 
   if (!result) {
     return (
@@ -88,7 +112,7 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
           <div className={`flex flex-col gap-3 ${contained("wide")}`}>
             {!saved && (
               <div className="flex items-start justify-between gap-3 text-small">
-                <Code className="whitespace-nowrap">{result.patient_ref}</Code><span className="text-right">{meta}</span>
+                <Code className="whitespace-nowrap">{refLabel(result.patient_ref)}</Code><span className="text-right">{meta}</span>
               </div>
             )}
             {saved && <p className="text-small">{meta}</p>}

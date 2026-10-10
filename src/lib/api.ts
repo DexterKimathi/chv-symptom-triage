@@ -10,11 +10,12 @@ import type {
   User,
 } from "./types";
 
+// The localhost default is for `npm run dev` only; next.config.ts stops a production build without the variable.
 const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
-/** A request the backend answered with an error. */
+/** A request the backend answered with an error. `fields` holds validation messages by field name. */
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(public status: number, message: string, public fields: Record<string, string> = {}) {
     super(message);
   }
 }
@@ -22,20 +23,50 @@ export class ApiError extends Error {
 /** The request never reached the backend: no connection, or the server is down. */
 export class NetworkError extends Error {
   constructor() {
-    super("No internet connection, please try again");
+    super(connectionMessage());
   }
 }
 
-function readDetail(body: unknown): string {
-  // FastAPI sends { detail: "..." } or, for validation errors, { detail: [ {msg}, ... ] }.
+/** The browser cannot tell "no signal" from "server down", except when the phone itself knows it is offline. */
+export function connectionMessage() {
+  return typeof navigator !== "undefined" && navigator.onLine === false
+    ? "No internet connection, please try again."
+    : "Couldn't reach the server. Check your connection or try again.";
+}
+
+const SERVER_PROBLEM = "The server had a problem with this request. Please try again, and tell your supervisor if it keeps happening.";
+
+/** Whether the backend answers at all. Used to tell a failed request apart from no connection. */
+async function serverIsUp(): Promise<boolean> {
+  try {
+    return (await fetch(`${BASE_URL}/health`, { cache: "no-store" })).ok;
+  } catch {
+    return false;
+  }
+}
+
+// Pydantic puts "Value error, " in front of messages from custom validators.
+const cleanMessage = (msg: string) => msg.replace(/^Value error, /, "");
+
+function readDetail(body: unknown): { message: string; fields: Record<string, string> } {
+  // FastAPI sends { detail: "..." } or, for validation errors,
+  // { detail: [ { loc: ["body", "phone"], msg }, ... ] }.
   if (body && typeof body === "object" && "detail" in body) {
     const detail = (body as { detail: unknown }).detail;
-    if (typeof detail === "string") return detail;
+    if (typeof detail === "string") return { message: detail, fields: {} };
     if (Array.isArray(detail)) {
-      return detail.map((d) => (d && typeof d === "object" && "msg" in d ? String(d.msg) : String(d))).join("; ");
+      const fields: Record<string, string> = {};
+      const messages = detail.map((d) => {
+        const item = (d && typeof d === "object" ? d : {}) as { loc?: unknown; msg?: unknown };
+        const message = cleanMessage(String(item.msg ?? d));
+        const field = Array.isArray(item.loc) ? item.loc[item.loc.length - 1] : undefined;
+        if (typeof field === "string" && !(field in fields)) fields[field] = message;
+        return message;
+      });
+      return { message: messages.join("; "), fields };
     }
   }
-  return "Something went wrong. Please try again.";
+  return { message: "Something went wrong. Please try again.", fields: {} };
 }
 
 async function request<T>(path: string, options: RequestInit & { token?: string | null } = {}): Promise<T> {
@@ -51,10 +82,17 @@ async function request<T>(path: string, options: RequestInit & { token?: string 
       },
     });
   } catch {
+    // A crash on the server can come back without CORS headers, and the browser then reports
+    // it exactly like a lost connection. If the server still answers a health check, it was
+    // the server, not the signal.
+    if (navigator.onLine !== false && (await serverIsUp())) throw new ApiError(500, SERVER_PROBLEM);
     throw new NetworkError();
   }
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new ApiError(response.status, readDetail(body));
+  if (!response.ok) {
+    const { message, fields } = readDetail(body);
+    throw new ApiError(response.status, response.status >= 500 ? SERVER_PROBLEM : message, fields);
+  }
   return body as T;
 }
 

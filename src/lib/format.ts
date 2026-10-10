@@ -31,8 +31,27 @@ export function whenLabel(iso: string) {
   return sameDay(d, new Date()) ? `Today ${time(d)}` : fullWhen(iso);
 }
 
-export const ageLabel = (band: AgeBand) => AGE_BANDS.find((b) => b.value === band)?.label ?? band;
-export const sexLabel = (sex: Sex) => (sex === "female" ? "Female" : "Male");
+// When the backend did not send a patient detail, say so. Never guess it.
+export const ageLabel = (band?: AgeBand | null) =>
+  AGE_BANDS.find((b) => b.value === band)?.label ?? "Age not recorded";
+
+export function sexLabel(sex?: Sex | null) {
+  if (sex === "female") return "Female";
+  if (sex === "male") return "Male";
+  return "Sex not recorded";
+}
+
+export const refLabel = (ref?: string | null) => ref?.trim() || "No code";
+
+// The same rule as the backend: a Kenyan mobile number written 07…, 01…, +2547…, 2547…
+// (or +2541…, 2541…), with or without spaces and hyphens.
+const KENYAN_MOBILE = /^(?:0|\+?254)([17]\d{8})$/;
+
+/** The local form, 0712345678, or null if this is not a Kenyan mobile number. */
+export function normalisePhone(phone: string): string | null {
+  const match = KENYAN_MOBILE.exec(phone.replace(/[\s-]/g, ""));
+  return match ? `0${match[1]}` : null;
+}
 
 /** 0711111111 shown as "0711 111 111". Anything else is shown as typed. */
 export function phoneLabel(phone: string) {
