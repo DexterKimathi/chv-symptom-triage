@@ -40,7 +40,9 @@ def test_thresholds_come_from_the_model_file():
 def test_login_succeeds_with_correct_credentials(client):
     r = client.post("/auth/login", json={"phone": "0711111111", "password": "chv-demo-2026"})
     assert r.status_code == 200
-    assert r.json()["role"] == "chv" and r.json()["access_token"]
+    body = r.json()
+    assert body["role"] == "chv" and body["access_token"]
+    assert body["name"] == "Wanjiru Kamau"
 
 
 def test_login_rejects_wrong_password(client):
@@ -78,6 +80,7 @@ def test_malaria_like_answers_return_ranked_result(client, chv_headers, make_ans
     assert r.status_code == 201
     body = r.json()
     assert body["outcome"] == "likely_condition"
+    assert (body["patient_ref"], body["age_band"], body["sex"]) == ("T-1", "15_to_49", "female")
     assert body["top"][0]["code"] == "malaria"
     assert len(body["top"]) == 3
     probs = [t["probability"] for t in body["top"]]

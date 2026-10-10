@@ -24,6 +24,9 @@ router = APIRouter(prefix="/assessments", tags=["assessments"])
 def _to_response(a: Assessment) -> AssessmentResponse:
     return AssessmentResponse(
         id=a.id,
+        patient_ref=a.patient_ref,
+        age_band=a.age_band,
+        sex=a.sex,
         outcome=a.outcome,
         headline=a.headline,
         danger_sign_triggered=a.danger_sign_triggered,
