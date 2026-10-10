@@ -10,17 +10,20 @@
 
 ## Core flow
 
-A community health volunteer answers 34 yes/no symptom questions; the backend checks for
+A community health volunteer answers 35 yes/no symptom questions; the backend checks for
 danger signs, runs the model, explains the result and returns referral guidance, and the
 assessment is saved.
 
 ## Stack
 
 Backend: FastAPI · Database: PostgreSQL · Frontend: Next.js ·
-Model: XGBoost (compared against Logistic Regression, Random Forest and a Naive Bayes
-reference built from the probability table)
+Model: Logistic Regression (chosen over Random Forest and XGBoost, and compared against a
+Naive Bayes reference built from the probability table)
 
 ## Run the backend
+
+Needs **Python 3.12 or newer**: the pinned numpy and scikit-learn do not install on
+older versions.
 
 1. `python -m venv venv && venv\Scripts\activate` (Windows) or `source venv/bin/activate`
 2. `pip install -r requirements.txt`
@@ -80,6 +83,6 @@ These are not optional and are checked before anything else runs:
 ## Status
 
 - [x] Week 1: backend endpoints
-- [x] Week 2: tests + real model (33 tests; model v1.0 evaluated on the held-out test set)
+- [x] Week 2: tests + real model (47 tests; model v1.0 evaluated on the held-out test set)
 - [ ] Week 3: frontend
 - [ ] Week 4: deployed + demo

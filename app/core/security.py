@@ -21,6 +21,11 @@ def verify_password(password: str, hashed: str) -> bool:
         return False
 
 
+# A real hash of a throwaway value. Login checks a wrong phone against it so that an
+# unknown number takes as long to reject as a wrong password.
+DUMMY_HASH = hash_password("not-a-real-account")
+
+
 def create_access_token(user_id: int, role: str) -> str:
     settings = get_settings()
     expires = datetime.now(timezone.utc) + timedelta(minutes=settings.access_token_expire_minutes)

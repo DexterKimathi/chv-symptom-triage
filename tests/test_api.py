@@ -56,6 +56,20 @@ def test_login_does_not_reveal_unknown_phone(client):
     assert r.json()["detail"] == "Incorrect phone or password"
 
 
+def test_unknown_phone_costs_a_password_check_too(client, monkeypatch):
+    # Rejecting an unknown phone without hashing is measurably faster than rejecting a
+    # wrong password, which reveals which numbers are registered.
+    from app.routers import auth
+    calls = []
+    real = auth.verify_password
+    monkeypatch.setattr(auth, "verify_password", lambda *a: calls.append(a) or real(*a))
+    for phone in ("0799999999", "0711111111"):
+        calls.clear()
+        r = client.post("/auth/login", json={"phone": phone, "password": "wrong-password"})
+        assert r.status_code == 401
+        assert len(calls) == 1, phone
+
+
 # --- questions --------------------------------------------------------------- #
 def test_questions_returns_all_in_order(client, chv_headers):
     questions = client.get("/questions", headers=chv_headers).json()
@@ -162,6 +176,17 @@ def test_get_one_assessment_returns_what_was_shown(client, chv_headers, make_ans
     assert fetched["top"] == created["top"]
 
 
+def test_timestamps_are_utc_with_a_timezone(client, chv_headers, make_answers):
+    from datetime import datetime, timedelta, timezone
+    created = _assess(client, chv_headers, make_answers(yes=MALARIA), ref="TZ-1").json()
+    fetched = client.get(f"/assessments/{created['id']}", headers=chv_headers).json()
+    listed = client.get("/assessments", headers=chv_headers).json()
+    for stamp in (created["created_at"], fetched["created_at"], listed[0]["created_at"]):
+        assert stamp.endswith("Z"), stamp
+        age = datetime.now(timezone.utc) - datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        assert timedelta(0) <= age < timedelta(minutes=1)
+
+
 def test_other_chvs_assessment_is_not_found(client, chv_headers, other_chv_headers, make_answers):
     created = _assess(client, chv_headers, make_answers(yes=MALARIA)).json()
     r = client.get(f"/assessments/{created['id']}", headers=other_chv_headers)
@@ -172,6 +197,12 @@ def test_missing_assessment_is_not_found(client, chv_headers):
     assert client.get("/assessments/999999", headers=chv_headers).status_code == 404
 
 
+def test_out_of_range_assessment_id_is_rejected(client, chv_headers):
+    # Larger than any database INTEGER; this used to overflow in the driver and return 500.
+    for bad in ("99999999999999999999999", str(2**31), "0", "-1"):
+        assert client.get(f"/assessments/{bad}", headers=chv_headers).status_code == 422, bad
+
+
 # --- conditions -------------------------------------------------------------- #
 def test_condition_returns_guidance(client, chv_headers):
     body = client.get("/conditions/1", headers=chv_headers).json()
@@ -180,6 +211,11 @@ def test_condition_returns_guidance(client, chv_headers):
 
 def test_missing_condition_is_not_found(client, chv_headers):
     assert client.get("/conditions/999", headers=chv_headers).status_code == 404
+
+
+def test_out_of_range_condition_id_is_rejected(client, chv_headers):
+    for bad in ("99999999999999999999999", str(2**31), "0"):
+        assert client.get(f"/conditions/{bad}", headers=chv_headers).status_code == 422, bad
 
 
 # --- admin ------------------------------------------------------------------- #
@@ -203,7 +239,63 @@ def test_duplicate_phone_is_rejected(client, admin_headers):
     assert r.status_code == 409
 
 
+def test_duplicate_phone_caught_by_the_database_is_also_a_409(client, admin_headers, monkeypatch):
+    # Simulates two simultaneous requests: the "does this phone exist" check finds nothing,
+    # and the unique index is what stops the second insert.
+    from sqlalchemy.orm import Session
+    monkeypatch.setattr(Session, "scalar", lambda self, *a, **k: None)
+    r = client.post("/admin/users", headers=admin_headers, json={
+        "name": "Race", "phone": "0711111111", "password": "a-strong-password"})
+    assert r.status_code == 409
+
+
 def test_short_password_is_rejected(client, admin_headers):
     r = client.post("/admin/users", headers=admin_headers, json={
         "name": "Short", "phone": "0755555555", "password": "short"})
+    assert r.status_code == 422
+
+
+def test_password_too_long_for_bcrypt_is_rejected(client, admin_headers):
+    # bcrypt accepts at most 72 bytes; this used to reach it and return a 500.
+    r = client.post("/admin/users", headers=admin_headers, json={
+        "name": "Long", "phone": "0755555555", "password": "p" * 73})
+    assert r.status_code == 422
+    assert "72 bytes" in r.text
+
+
+def test_72_byte_password_is_accepted_and_works(client, admin_headers):
+    r = client.post("/admin/users", headers=admin_headers, json={
+        "name": "Edge", "phone": "0756565656", "password": "p" * 72})
+    assert r.status_code == 201
+    r = client.post("/auth/login", json={"phone": "0756565656", "password": "p" * 72})
+    assert r.status_code == 200
+
+
+def test_non_numeric_phone_is_rejected(client, admin_headers):
+    for bad in ("abcdefg", "12345678", "07123", "0812345678", "071234567890"):
+        r = client.post("/admin/users", headers=admin_headers, json={
+            "name": "Bad", "phone": bad, "password": "a-strong-password"})
+        assert r.status_code == 422, bad
+
+
+def test_phone_is_stored_in_local_form(client, admin_headers):
+    r = client.post("/admin/users", headers=admin_headers, json={
+        "name": "Intl", "phone": "+254 757 575-757", "password": "a-strong-password"})
+    assert r.status_code == 201
+    assert r.json()["phone"] == "0757575757"
+
+
+def test_same_number_in_another_spelling_is_a_duplicate(client, admin_headers):
+    r = client.post("/admin/users", headers=admin_headers, json={
+        "name": "Dup", "phone": "+254711111111", "password": "a-strong-password"})
+    assert r.status_code == 409
+
+
+def test_login_accepts_international_spelling(client):
+    r = client.post("/auth/login", json={"phone": "+254711111111", "password": "chv-demo-2026"})
+    assert r.status_code == 200
+
+
+def test_login_rejects_malformed_phone(client):
+    r = client.post("/auth/login", json={"phone": "abcdefg", "password": "anything"})
     assert r.status_code == 422

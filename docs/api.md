@@ -123,12 +123,20 @@ patients, correct 90.4% of the time.
 | `POST /auth/login` | 401 | Wrong phone or password. Same message either way, so registered numbers are not revealed |
 | `GET /assessments/{id}` | 404 | Not found, **or belongs to another CHV**. Both look identical, so ids do not leak |
 | `GET /conditions/{id}` | 404 | Not found |
+| `GET /assessments/{id}`, `GET /conditions/{id}` | 422 | Id not a whole number from 1 to 2147483647 |
 | `POST /admin/users` | 403 | Caller is not an admin |
 | `POST /admin/users` | 409 | Phone already registered |
-| `POST /admin/users` | 422 | Password under 8 characters, or missing fields |
+| `POST /admin/users` | 422 | Password under 8 characters or over 72 bytes, phone not a Kenyan mobile number, or missing fields |
+| `POST /auth/login` | 422 | Phone not a Kenyan mobile number |
 
 ## Not in this version
 
 Follow-ups, condition editing, model-version switching and the stats endpoint from the
 build guide are on the cut list until the core flow is complete. Condition guidance is
 loaded by `scripts/seed.py`.
+
+## Phone numbers
+
+`phone` must be a Kenyan mobile number: `0712345678`, `254712345678` or `+254712345678`
+(spaces and hyphens are ignored). It is always stored and returned in the local form,
+`0712345678`, and login accepts any of the three spellings.

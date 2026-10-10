@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.deps import get_current_user
+from app.deps import RowId, get_current_user
 from app.models import Condition, Question, User
 from app.schemas import ConditionOut, QuestionOut
 
@@ -26,7 +26,7 @@ def list_questions(
 
 @router.get("/conditions/{condition_id}", response_model=ConditionOut)
 def get_condition(
-    condition_id: int, _: User = Depends(get_current_user), db: Session = Depends(get_db)
+    condition_id: RowId, _: User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> Condition:
     condition = db.get(Condition, condition_id)
     if condition is None:
