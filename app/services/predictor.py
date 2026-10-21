@@ -55,6 +55,11 @@ class Predictor:
             if extra:
                 parts.append(f"unknown question code(s): {', '.join(extra)}")
             raise InvalidAnswers("; ".join(parts))
+        # A danger sign must be checked on every patient. "Not asked" would let a skipped
+        # check produce a routine result, so only yes or no is accepted for these.
+        unchecked = [code for code in self.danger_signs if answers.get(code) not in ("yes", "no")]
+        if unchecked:
+            raise InvalidAnswers(f"danger sign question(s) must be answered yes or no: {', '.join(unchecked)}")
 
     def danger_signs_present(self, answers: dict[str, str]) -> list[str]:
         return [code for code in self.danger_signs if answers.get(code) == "yes"]

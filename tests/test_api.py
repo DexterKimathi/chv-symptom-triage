@@ -126,6 +126,21 @@ def test_unknown_answers_are_accepted(client, chv_headers, make_answers):
     assert _assess(client, chv_headers, answers).status_code == 201
 
 
+def test_danger_sign_answered_unknown_is_rejected(client, chv_headers, make_answers):
+    # Without this, a skipped danger-sign check with malaria-like symptoms came back as a
+    # routine "Likely: Malaria" result instead of prompting the check.
+    for sign in ("lethargy_reduced_alertness", "unable_to_drink_or_feed", "convulsions"):
+        r = _assess(client, chv_headers, make_answers(yes=MALARIA, unknown={sign}))
+        assert r.status_code == 422, sign
+        assert sign in r.json()["detail"]
+
+
+def test_danger_sign_rejection_saves_nothing(client, chv_headers, make_answers):
+    before = len(client.get("/assessments", headers=chv_headers).json())
+    _assess(client, chv_headers, make_answers(unknown={"convulsions"}))
+    assert len(client.get("/assessments", headers=chv_headers).json()) == before
+
+
 def test_missing_answer_is_rejected(client, chv_headers, make_answers):
     answers = make_answers(yes=MALARIA)
     answers.pop("headache")
