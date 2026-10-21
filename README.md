@@ -74,6 +74,8 @@ These are not optional and are checked before anything else runs:
 
 - Danger-sign questions are evaluated **before** the model. Any danger sign answered yes
   returns "refer urgently now", whatever the model says.
+- The three danger-sign questions must be answered yes or no. `unknown` is rejected with a
+  422, so a skipped check can never produce a routine result.
 - A result is never presented as a diagnosis. Every response carries a disclaimer and a
   seek-professional-care message.
 - Low confidence returns "symptoms do not clearly match; refer for assessment" rather than
@@ -83,6 +85,6 @@ These are not optional and are checked before anything else runs:
 ## Status
 
 - [x] Week 1: backend endpoints
-- [x] Week 2: tests + real model (47 tests; model v1.0 evaluated on the held-out test set)
+- [x] Week 2: tests + real model (49 tests; model v1.0 evaluated on the held-out test set)
 - [ ] Week 3: frontend
 - [ ] Week 4: deployed + demo

@@ -57,7 +57,8 @@ inputs it never saw in training.
 
 ### Processing order
 
-1. **Validate.** Exactly the 35 known codes, each `yes`/`no`/`unknown`.
+1. **Validate.** Exactly the 35 known codes, each `yes`/`no`/`unknown`. The three danger signs
+   (`lethargy_reduced_alertness`, `unable_to_drink_or_feed`, `convulsions`) must be `yes` or `no`.
 2. **Danger signs.** Convulsions, lethargy or reduced alertness, and inability to drink or
    feed are checked **before** the model. Any one answered `yes` makes the outcome
    `urgent_referral`, whatever the model says.
@@ -114,7 +115,7 @@ patients, correct 90.4% of the time.
 | Status | When |
 |---|---|
 | 401 | Missing, invalid or expired token |
-| 422 | A question code missing or unknown, an answer other than yes/no/unknown, or an invalid age band or sex |
+| 422 | A question code missing or unknown, an answer other than yes/no/unknown, a danger sign answered `unknown`, or an invalid age band or sex |
 
 ## Other errors
 
