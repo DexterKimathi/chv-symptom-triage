@@ -59,10 +59,13 @@ export function phoneLabel(phone: string) {
   return digits.length === 10 ? `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}` : phone;
 }
 
-/** Rounded percentage; a non-zero chance never shows as 0%. */
+/** Rounded percentage. A non-zero chance never shows as 0%, and the model is never shown
+ *  as certain: anything that would round to 100% reads ">99%". */
 export function percent(probability: number) {
   const rounded = Math.round(probability * 100);
-  return rounded === 0 ? "under 1%" : `${rounded}%`;
+  if (rounded === 0) return "under 1%";
+  if (rounded >= 100) return ">99%";
+  return `${rounded}%`;
 }
 
 /** One-line status for a history row. */

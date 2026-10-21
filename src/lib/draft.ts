@@ -45,9 +45,12 @@ const ANSWER_VALUES: readonly string[] = ["yes", "no", "unknown"];
  */
 export function reconcileDraft(draft: Draft, questions: Question[], pageSize: number): Draft {
   const codes = new Set(questions.map((q) => q.code));
+  const danger = new Set(questions.filter((q) => q.is_danger_sign).map((q) => q.code));
   const answers: Record<string, Answer> = {};
   for (const [code, value] of Object.entries(draft.answers ?? {})) {
-    if (codes.has(code) && ANSWER_VALUES.includes(value)) answers[code] = value;
+    if (!codes.has(code) || !ANSWER_VALUES.includes(value)) continue;
+    if (danger.has(code) && value === "unknown") continue; // danger signs need yes or no
+    answers[code] = value;
   }
   const patientRef = typeof draft.patientRef === "string" ? draft.patientRef : "";
   const ageBand = AGE_BANDS.some((b) => b.value === draft.ageBand) ? draft.ageBand : null;

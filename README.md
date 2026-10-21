@@ -56,7 +56,7 @@ and the deployed frontend URL in production. A different port counts as a differ
 |---|---|---|
 | `/login` | everyone | Phone number and password |
 | `/` | logged in | Volunteer name, start an assessment, recent assessments |
-| `/assess` | logged in | Patient code, age and sex, then 35 questions in 7 pages of 5. Next unlocks when all 5 are answered |
+| `/assess` | logged in | Patient code, age and sex, then 35 questions in 7 pages of 5, danger signs first. Next unlocks when all 5 are answered. Danger signs take Yes or No only; once they are answered with a Yes, "Get urgent result now" sends the result straight away |
 | `/result/[id]` | logged in | The result straight after sending |
 | `/history/[id]` | logged in | A past result, read-only, exactly as first shown |
 | `/admin` | admins | Add a volunteer account |

@@ -190,7 +190,7 @@ function Finding({ result }: { result: Assessment }) {
             <b className="text-heading">{percent(first.probability)}</b>
           </div>
           <div className="h-3 overflow-hidden rounded-md bg-track" aria-hidden>
-            <div className="h-full rounded-md bg-ink" style={{ width: `${Math.round(first.probability * 100)}%` }} />
+            <div className="h-full rounded-md bg-ink" style={{ width: `${Math.min(99, Math.round(first.probability * 100))}%` }} />
           </div>
         </div>
       </section>

@@ -19,6 +19,9 @@ const ANSWERS: { value: Answer; label: string; on: string }[] = [
   { value: "no", label: "No", on: "border-ink bg-ink text-white" },
   { value: "unknown", label: "Not asked", on: "border-edge bg-edge text-white" },
 ];
+// A danger sign must be checked on every patient, so those questions have no "Not asked".
+// The backend rejects "unknown" for them too.
+const DANGER_ANSWERS = ANSWERS.filter((a) => a.value !== "unknown");
 
 function Assess() {
   const { session, userId } = useAuth();
@@ -56,7 +59,11 @@ function Assess() {
   }, [step, phase]);
 
   const pages = useMemo(() => {
-    const sorted = [...(questions ?? [])].sort((a, b) => a.display_order - b.display_order);
+    // Danger signs come first, as in IMCI: check them before anything else, so an urgent
+    // case can be sent from the first page. The rest follow in the backend's display order.
+    const sorted = [...(questions ?? [])].sort(
+      (a, b) => Number(b.is_danger_sign) - Number(a.is_danger_sign) || a.display_order - b.display_order,
+    );
     const out: Question[][] = [];
     for (let i = 0; i < sorted.length; i += PAGE_SIZE) out.push(sorted.slice(i, i + PAGE_SIZE));
     return out;
@@ -64,6 +71,12 @@ function Assess() {
 
   const totalSteps = pages.length + 1;
   const ref = patientRef.trim();
+  const dangerQuestions = (questions ?? []).filter((q) => q.is_danger_sign);
+  // Every danger sign answered yes or no, with at least one yes: the result is urgent
+  // whatever the other answers are.
+  const dangerChecked =
+    dangerQuestions.some((q) => answers[q.code] === "yes") &&
+    dangerQuestions.every((q) => answers[q.code] === "yes" || answers[q.code] === "no");
 
   function cancel() {
     clearDraft();
@@ -80,12 +93,18 @@ function Assess() {
     if (!errors.ref && !errors.age && !errors.sex) update({ step: 1 });
   }
 
-  async function submit() {
+  // With `urgentNow`, a volunteer who has found a danger sign sends straight away: every
+  // question not yet answered goes as "Not asked". The danger signs themselves are always
+  // answered by then, since the shortcut only appears once all of them are.
+  async function submit(urgentNow = false) {
     if (!session || !questions || !ageBand || !sex) return;
     setPhase("checking");
     setSubmitError(null);
+    const sent = urgentNow
+      ? Object.fromEntries(questions.map((q) => [q.code, answers[q.code] ?? "unknown"]))
+      : answers;
     try {
-      const result = await api.submitAssessment(session.token, { patient_ref: ref, age_band: ageBand, sex, answers });
+      const result = await api.submitAssessment(session.token, { patient_ref: ref, age_band: ageBand, sex, answers: sent });
       clearDraft();
       router.replace(`/result/${result.id}`);
     } catch (e) {
@@ -145,7 +164,7 @@ function Assess() {
           </p>
         </Body>
         <BottomBar width="narrow" className="md:flex-row-reverse md:[&>*]:flex-1">
-          <Button onClick={submit}>Try again</Button>
+          <Button onClick={() => submit(dangerChecked)}>Try again</Button>
           <Button variant="secondary" onClick={() => setPhase("form")}>Back to questions</Button>
         </BottomBar>
       </>
@@ -199,7 +218,9 @@ function Assess() {
     );
   }
   const first = (step - 1) * PAGE_SIZE + 1;
-  const answered = page.filter((q) => answers[q.code]).length;
+  const isAnswered = (q: Question) =>
+    q.is_danger_sign ? answers[q.code] === "yes" || answers[q.code] === "no" : !!answers[q.code];
+  const answered = page.filter(isAnswered).length;
   const complete = answered === page.length;
   const last = step === totalSteps - 1;
 
@@ -233,18 +254,34 @@ function Assess() {
                     <b className="min-w-7 text-ink-soft">{first + i}</b>
                     <span>{q.text}</span>
                   </p>
-                  <div className="grid grid-cols-[1fr_1fr_1.3fr] gap-2 md:max-w-lg md:pl-9">
-                    {ANSWERS.map((a) => (
+                  <div className={`grid gap-2 md:max-w-lg md:pl-9 ${q.is_danger_sign ? "grid-cols-2" : "grid-cols-[1fr_1fr_1.3fr]"}`}>
+                    {(q.is_danger_sign ? DANGER_ANSWERS : ANSWERS).map((a) => (
                       <button key={a.value} type="button" aria-pressed={value === a.value} onClick={() => setAnswer(q.code, a.value)}
                         className={`h-14 rounded-[10px] border-2 px-1 text-label font-bold ${value === a.value ? a.on : "border-edge bg-white text-ink"}`}>
                         {value === a.value && "✓ "}{a.label}
                       </button>
                     ))}
                   </div>
+                  {q.is_danger_sign && !value && (
+                    <p className="text-small text-ink-soft md:pl-9">Yes or No is needed. Look at the patient or ask the caregiver.</p>
+                  )}
                   {warn && (
-                    <div className="flex items-start gap-2.5 rounded-[10px] bg-red-tint p-3 text-small">
-                      <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-md bg-red font-bold text-white">!</span>
-                      <span><b>Danger sign.</b> The result will tell you to refer urgently.</span>
+                    <div className="flex flex-col gap-3 rounded-[10px] bg-red-tint p-3 text-small">
+                      <div className="flex items-start gap-2.5">
+                        <span aria-hidden className="flex h-6 w-6 flex-none items-center justify-center rounded-md bg-red font-bold text-white">!</span>
+                        <span>
+                          <b>Danger sign.</b>{" "}
+                          {dangerChecked
+                            ? "Refer urgently. You can get the result now without the other questions."
+                            : "The result will tell you to refer urgently. Answer the other danger signs to get it now."}
+                        </span>
+                      </div>
+                      {dangerChecked && (
+                        <button type="button" onClick={() => submit(true)}
+                          className="h-12 rounded-[10px] bg-red text-label font-bold text-white hover:brightness-110">
+                          Get urgent result now
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -261,7 +298,7 @@ function Assess() {
         <div className="grid grid-cols-[1fr_2fr] gap-3">
           <Button variant="secondary" onClick={() => update({ step: step - 1 })}>Back</Button>
           {last
-            ? <Button onClick={submit} disabled={!complete}>Get result</Button>
+            ? <Button onClick={() => submit()} disabled={!complete}>Get result</Button>
             : <Button onClick={() => update({ step: step + 1 })} disabled={!complete}>Next →</Button>}
         </div>
       </BottomBar>
