@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Path, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -12,6 +14,10 @@ from app.db import get_db
 from app.models import User
 
 bearer = HTTPBearer(auto_error=False)
+
+# A row id in the URL. Bounded to what a database INTEGER column holds, so an oversized
+# number is a 422 here rather than an overflow error inside the database driver.
+RowId = Annotated[int, Path(ge=1, le=2**31 - 1)]
 
 UNAUTHORISED = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,

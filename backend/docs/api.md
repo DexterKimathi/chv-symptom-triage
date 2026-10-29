@@ -17,6 +17,17 @@ Every endpoint except `/health` and `/auth/login` needs `Authorization: Bearer <
 | GET | `/conditions/{id}` | CHV, admin | Description, referral level and guidance for a condition |
 | POST | `/admin/users` | admin | Create a CHV or admin account |
 
+## POST /auth/login
+
+Request `{"phone": "0711111111", "password": "..."}`. Response `200`:
+
+```json
+{"access_token": "<jwt>", "token_type": "bearer", "role": "chv", "name": "Wanjiru Kamau", "area": "Kiambu"}
+```
+
+`name` and `area` are for display only. The token alone decides what the user may do.
+Wrong phone or password gives `401` with the same message either way.
+
 ## POST /assessments
 
 ### Request
@@ -46,7 +57,8 @@ inputs it never saw in training.
 
 ### Processing order
 
-1. **Validate.** Exactly the 35 known codes, each `yes`/`no`/`unknown`.
+1. **Validate.** Exactly the 35 known codes, each `yes`/`no`/`unknown`. The three danger signs
+   (`lethargy_reduced_alertness`, `unable_to_drink_or_feed`, `convulsions`) must be `yes` or `no`.
 2. **Danger signs.** Convulsions, lethargy or reduced alertness, and inability to drink or
    feed are checked **before** the model. Any one answered `yes` makes the outcome
    `urgent_referral`, whatever the model says.
@@ -71,6 +83,9 @@ patients, correct 90.4% of the time.
 ```json
 {
   "id": 12,
+  "patient_ref": "P-001",
+  "age_band": "15_to_49",
+  "sex": "female",
   "outcome": "likely_condition",
   "headline": "Likely: Malaria",
   "danger_sign_triggered": false,
@@ -100,7 +115,7 @@ patients, correct 90.4% of the time.
 | Status | When |
 |---|---|
 | 401 | Missing, invalid or expired token |
-| 422 | A question code missing or unknown, an answer other than yes/no/unknown, or an invalid age band or sex |
+| 422 | A question code missing or unknown, an answer other than yes/no/unknown, a danger sign answered `unknown`, or an invalid age band or sex |
 
 ## Other errors
 
@@ -109,12 +124,20 @@ patients, correct 90.4% of the time.
 | `POST /auth/login` | 401 | Wrong phone or password. Same message either way, so registered numbers are not revealed |
 | `GET /assessments/{id}` | 404 | Not found, **or belongs to another CHV**. Both look identical, so ids do not leak |
 | `GET /conditions/{id}` | 404 | Not found |
+| `GET /assessments/{id}`, `GET /conditions/{id}` | 422 | Id not a whole number from 1 to 2147483647 |
 | `POST /admin/users` | 403 | Caller is not an admin |
 | `POST /admin/users` | 409 | Phone already registered |
-| `POST /admin/users` | 422 | Password under 8 characters, or missing fields |
+| `POST /admin/users` | 422 | Password under 8 characters or over 72 bytes, phone not a Kenyan mobile number, or missing fields |
+| `POST /auth/login` | 422 | Phone not a Kenyan mobile number |
 
 ## Not in this version
 
 Follow-ups, condition editing, model-version switching and the stats endpoint from the
 build guide are on the cut list until the core flow is complete. Condition guidance is
 loaded by `scripts/seed.py`.
+
+## Phone numbers
+
+`phone` must be a Kenyan mobile number: `0712345678`, `254712345678` or `+254712345678`
+(spaces and hyphens are ignored). It is always stored and returned in the local form,
+`0712345678`, and login accepts any of the three spellings.

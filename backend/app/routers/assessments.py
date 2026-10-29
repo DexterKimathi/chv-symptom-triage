@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.db import get_db
-from app.deps import get_current_user
+from app.deps import RowId, get_current_user
 from app.models import Assessment, AssessmentAnswer, Condition, Question, User
 from app.schemas import (
     AssessmentRequest,
@@ -24,6 +24,9 @@ router = APIRouter(prefix="/assessments", tags=["assessments"])
 def _to_response(a: Assessment) -> AssessmentResponse:
     return AssessmentResponse(
         id=a.id,
+        patient_ref=a.patient_ref,
+        age_band=a.age_band,
+        sex=a.sex,
         outcome=a.outcome,
         headline=a.headline,
         danger_sign_triggered=a.danger_sign_triggered,
@@ -120,7 +123,7 @@ def list_assessments(
 
 @router.get("/{assessment_id}", response_model=AssessmentResponse)
 def get_assessment(
-    assessment_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)
+    assessment_id: RowId, user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> AssessmentResponse:
     assessment = db.get(Assessment, assessment_id)
     # 404 rather than 403 for someone else's record, so ids do not leak.

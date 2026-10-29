@@ -1,17 +1,17 @@
 # Web
-fastapi
-uvicorn[standard]
-pydantic
-pydantic-settings
-python-multipart
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.0
+pydantic-settings==2.15.0
+python-multipart==0.0.32
 
 # Database
-sqlalchemy
-psycopg[binary]
+sqlalchemy==2.1.4
+psycopg[binary]==3.3.6
 
 # Auth
-PyJWT
-bcrypt
+PyJWT==2.15.1
+bcrypt==5.0.0
 
 # Model serving. These are PINNED to the versions the model was trained with in the
 # ML repo. Unpickling a model under a different scikit-learn version can fail or, worse,
@@ -24,5 +24,5 @@ joblib==1.6.0
 xgboost==3.4.1
 
 # Tests
-pytest
-httpx
+pytest==9.1.1
+httpx==0.28.1

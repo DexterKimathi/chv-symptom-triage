@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
 
     model_path: str = str(ROOT / "app" / "services" / "model" / "model.joblib")
+    # Browser origins allowed to call the API: the Next.js app in development. Add the
+    # deployed frontend URL here (comma-separated) when it goes live.
+    cors_origins: str = "http://localhost:3000"
+
     # Fallbacks only. From v1.0 the model bundle carries its own version and referral
     # thresholds, chosen on validation in the ML repo (src/finalise.py), and those are used.
     model_version: str = "unversioned"
