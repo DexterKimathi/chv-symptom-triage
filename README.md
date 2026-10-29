@@ -34,8 +34,17 @@ older versions.
 6. Open http://localhost:8000/docs, log in with `POST /auth/login`, then use
    **Authorize** with the token
 
-Runs on a local SQLite file by default. Set `DATABASE_URL` in `.env` to use PostgreSQL;
-nothing else changes.
+### With PostgreSQL
+
+PostgreSQL is the project's database. Locally it runs in Docker:
+
+1. Start Docker Desktop, then `docker compose up -d` (PostgreSQL 17 on port 5432, with a
+   `chv` database for the app and `chv_test` for the tests)
+2. In `.env`, set `DATABASE_URL=postgresql+psycopg://chv:chv-local@localhost:5432/chv`
+3. `python -m scripts.seed --reset`, then `uvicorn app.main:app --reload` as above
+
+Without `DATABASE_URL` the backend falls back to a local SQLite file (`chv.db`), so it
+still runs on a machine without Docker. The code is the same on both.
 
 Demo logins, local and check-in use only:
 
@@ -53,9 +62,19 @@ The API contract is in [docs/api.md](docs/api.md) and the tables in
 pytest
 ```
 
+That uses a throwaway SQLite database. To run the same tests against PostgreSQL, start
+it with `docker compose up -d` and point the tests at the test database:
+
+```
+# PowerShell
+$env:TEST_DATABASE_URL="postgresql+psycopg://chv:chv-local@localhost:5432/chv_test"; pytest
+```
+
+Both should report 49 passed.
+
 ## Model
 
-Dataset: synthetic, generated in the ML repo from a 170-cell symptom probability table in
+Dataset: synthetic, generated in the ML repo from a 175-cell symptom probability table in
 which every cell records its clinical source. No public dataset covers the five target
 conditions together. Rebuildable from config and seed; see the ML repo README.
 

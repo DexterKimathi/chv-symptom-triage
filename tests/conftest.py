@@ -1,10 +1,14 @@
-"""Test fixtures: every test session gets its own throwaway SQLite database.
+"""Test fixtures: every test session gets its own throwaway database.
 
-The development database (chv.db) is never touched. The real model bundle is used, so
-these tests exercise the same model the API serves.
+By default that is a SQLite file. Set TEST_DATABASE_URL to run the same tests against
+PostgreSQL; its tables are dropped and recreated, so point it at a database used only for
+tests (docker-compose.yml creates `chv_test` for this). The development database is never
+touched. The real model bundle is used, so these tests exercise the same model the API serves.
 """
 
 from __future__ import annotations
+
+import os
 
 import pytest
 from fastapi.testclient import TestClient
@@ -23,7 +27,9 @@ CHV_B = DEMO_USERS[2]
 
 @pytest.fixture(scope="session")
 def client(tmp_path_factory):
-    engine = make_engine(f"sqlite:///{tmp_path_factory.mktemp('db') / 'test.db'}")
+    url = os.environ.get("TEST_DATABASE_URL") or f"sqlite:///{tmp_path_factory.mktemp('db') / 'test.db'}"
+    engine = make_engine(url)
+    Base.metadata.drop_all(engine)  # a PostgreSQL test database may hold a previous run
     Base.metadata.create_all(engine)
     TestSession = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 

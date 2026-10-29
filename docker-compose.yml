@@ -1,0 +1,25 @@
+# Local PostgreSQL for development and for running the tests against PostgreSQL.
+#   docker compose up -d        start it (data is kept in the chv-pgdata volume)
+#   docker compose down         stop it
+# The password is for local use only. A deployment uses its own DATABASE_URL.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: chv
+      POSTGRES_PASSWORD: chv-local
+      POSTGRES_DB: chv
+    ports:
+      - "5432:5432"
+    volumes:
+      - chv-pgdata:/var/lib/postgresql/data
+      # Creates the separate database the test suite uses, on first start only.
+      - ./scripts/postgres-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chv -d chv"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  chv-pgdata:
