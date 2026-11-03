@@ -38,6 +38,20 @@ export interface ExplanationItem {
   weight: number;
 }
 
+export interface NextQuestionRequest {
+  age_band: AgeBand;
+  sex: Sex;
+  answers: Record<string, Answer>;
+}
+
+export interface NextQuestionResponse {
+  done: boolean;
+  reason: "danger_sign" | "confident" | "complete" | null;
+  next_question: string | null;
+  asked: number;
+  total: number;
+}
+
 export interface AssessmentRequest {
   patient_ref: string;
   age_band: AgeBand;

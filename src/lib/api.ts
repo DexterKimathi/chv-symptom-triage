@@ -2,6 +2,8 @@
 
 import type {
   Assessment,
+  NextQuestionRequest,
+  NextQuestionResponse,
   AssessmentRequest,
   AssessmentSummary,
   CreateUserRequest,
@@ -101,6 +103,10 @@ export const api = {
     request<TokenResponse>("/auth/login", { method: "POST", body: JSON.stringify({ phone, password }) }),
 
   questions: (token: string) => request<Question[]>("/questions", { token }),
+
+  /** Adaptive questioning: the next question to ask, or done. Saves nothing. */
+  nextQuestion: (token: string, payload: NextQuestionRequest) =>
+    request<NextQuestionResponse>("/assessments/next", { method: "POST", token, body: JSON.stringify(payload) }),
 
   submitAssessment: (token: string, payload: AssessmentRequest) =>
     request<Assessment>("/assessments", { method: "POST", token, body: JSON.stringify(payload) }),
