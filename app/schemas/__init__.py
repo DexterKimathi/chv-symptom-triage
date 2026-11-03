@@ -95,6 +95,23 @@ class AssessmentRequest(BaseModel):
     )
 
 
+class NextQuestionRequest(BaseModel):
+    age_band: AgeBand
+    sex: Sex
+    answers: dict[str, Answer] = Field(
+        description="The questions answered so far, including the three danger signs (yes or no). "
+                    "Questions not yet asked are left out."
+    )
+
+
+class NextQuestionResponse(BaseModel):
+    done: bool
+    reason: Literal["danger_sign", "confident", "complete"] | None
+    next_question: str | None
+    asked: int
+    total: int
+
+
 class RankedCondition(BaseModel):
     code: str
     name: str

@@ -12,10 +12,13 @@ from app.schemas import (
     AssessmentRequest,
     AssessmentResponse,
     AssessmentSummary,
+    NextQuestionRequest,
+    NextQuestionResponse,
     ExplanationItem,
     RankedCondition,
 )
 from app.services.predictor import InvalidAnswers, get_predictor
+from app.services.questioner import get_questioner
 from app.services.triage import DISCLAIMER, decide
 
 router = APIRouter(prefix="/assessments", tags=["assessments"])
@@ -40,6 +43,21 @@ def _to_response(a: Assessment) -> AssessmentResponse:
         model_version=a.model_version,
         created_at=a.created_at,
     )
+
+
+@router.post("/next", response_model=NextQuestionResponse)
+def next_question(body: NextQuestionRequest, user: User = Depends(get_current_user)) -> NextQuestionResponse:
+    """Adaptive questioning: the most informative question to ask next, or done.
+
+    Nothing is saved. When done, the client sends the full assessment to POST /assessments
+    with every question it did not ask as "unknown"."""
+    questioner = get_questioner()
+    try:
+        step = questioner.next(body.answers, body.age_band, body.sex)
+    except InvalidAnswers as error:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error))
+    return NextQuestionResponse(done=step.done, reason=step.reason, next_question=step.next_question,
+                                asked=step.asked, total=len(questioner.codes))
 
 
 @router.post("", response_model=AssessmentResponse, status_code=status.HTTP_201_CREATED)

@@ -11,6 +11,7 @@ Every endpoint except `/health` and `/auth/login` needs `Authorization: Bearer <
 | GET | `/health` | anyone | Liveness, model version and data hash being served |
 | POST | `/auth/login` | anyone | Phone and password in, JWT out |
 | GET | `/questions` | CHV, admin | The 35 checklist questions in display order |
+| POST | `/assessments/next` | CHV, admin | Adaptive questioning: the next question to ask, or done. Saves nothing |
 | POST | `/assessments` | CHV, admin | **The core flow.** Answers in, referral decision out, saved |
 | GET | `/assessments` | CHV, admin | History. A CHV sees only their own; an admin sees all |
 | GET | `/assessments/{id}` | CHV, admin | One assessment, exactly as it was shown at the time |
@@ -27,6 +28,34 @@ Request `{"phone": "0711111111", "password": "..."}`. Response `200`:
 
 `name` and `area` are for display only. The token alone decides what the user may do.
 Wrong phone or password gives `401` with the same message either way.
+
+## POST /assessments/next
+
+Adaptive questioning. Send the answers given so far (the three danger signs first, yes or
+no); questions not yet asked are left out. Nothing is saved.
+
+```json
+{"age_band": "15_to_49", "sex": "female",
+ "answers": {"lethargy_reduced_alertness": "no", "unable_to_drink_or_feed": "no", "convulsions": "no"}}
+```
+
+Response `200`: either the next question, or `done` with the reason.
+
+```json
+{"done": false, "reason": null, "next_question": "fever_current", "asked": 3, "total": 35}
+{"done": true, "reason": "confident", "next_question": null, "asked": 14, "total": 35}
+```
+
+- `danger_sign`: a danger sign is yes, so the result is an urgent referral.
+- `confident`: the model's top probability reached the stop threshold (0.85, chosen on
+  validation in the ML repo, `src/adaptive.py`, and read from `question_frequencies.json`).
+- `complete`: every question has been asked.
+
+The next question is the unasked one that most reduces the expected uncertainty about the
+condition, from per-condition answer frequencies in the training data. When done, send the
+assessment to `POST /assessments` with every unasked question as `unknown`.
+
+`422` if a danger sign is missing or not yes/no, or a question code is unknown.
 
 ## POST /assessments
 

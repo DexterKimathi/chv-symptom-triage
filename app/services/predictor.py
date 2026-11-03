@@ -69,8 +69,13 @@ class Predictor:
         row["age_band"], row["sex"] = age_band, sex
         return pd.DataFrame([row], columns=self.feature_order)
 
+    def probabilities(self, answers: dict[str, str], age_band: str, sex: str) -> dict[str, float]:
+        """Probability of every condition. `answers` must hold every question code."""
+        probs = self.model.predict_proba(self._frame(answers, age_band, sex))[0]
+        return {str(c): float(p) for c, p in zip(self.model.classes_, probs)}
+
     # ------------------------------------------------------------------ #
-    def predict(self, answers: dict[str, str], age_band: str, sex: str, top_k: int = 3) -> Prediction:
+    def predict(self, answers: dict[str, str], age_band: str, sex: str, top_k: int = 5) -> Prediction:
         self.validate(answers)
         frame = self._frame(answers, age_band, sex)
         probs = self.model.predict_proba(frame)[0]
