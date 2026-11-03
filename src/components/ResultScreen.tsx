@@ -246,9 +246,9 @@ function Probabilities({ result }: { result: Assessment }) {
       <h2 className="text-label font-bold">{named ? "Less likely" : "How likely each condition is"}</h2>
       {rows.map((c) => (
         <div key={c.code} className="border-b border-divider py-3">
-          <div className="flex justify-between text-body">
+          <div className="flex justify-between gap-3 text-body">
             <span>{c.name}</span>
-            <span className="text-ink-soft">{percent(c.probability)}</span>
+            <span className="shrink-0 text-ink-soft">{percent(c.probability)}</span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded bg-track" aria-hidden>
             <div className="h-full rounded bg-ink-soft" style={{ width: `${Math.max(1, Math.min(99, Math.round(c.probability * 100)))}%` }} />
