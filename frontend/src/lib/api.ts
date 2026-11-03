@@ -111,6 +111,13 @@ export const api = {
   submitAssessment: (token: string, payload: AssessmentRequest) =>
     request<Assessment>("/assessments", { method: "POST", token, body: JSON.stringify(payload) }),
 
+  /** Whether a returning patient's code has been issued. Other failures are thrown. */
+  patientCodeIssued: (token: string, code: string) =>
+    request<null>(`/assessments/patients/${encodeURIComponent(code)}`, { token }).then(
+      () => true,
+      (e) => { if (e instanceof ApiError && e.status === 404) return false; throw e; },
+    ),
+
   assessments: (token: string) => request<AssessmentSummary[]>("/assessments", { token }),
 
   assessment: (token: string, id: number | string) => request<Assessment>(`/assessments/${id}`, { token }),

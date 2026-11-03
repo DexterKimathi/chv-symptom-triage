@@ -10,6 +10,7 @@ import {
 import { api, NetworkError } from "@/lib/api";
 import { RequireAuth, useAuth, useSessionGuard } from "@/lib/auth";
 import { clearDraft, loadDraft, reconcileDraft, saveDraft, type Draft } from "@/lib/draft";
+import { isPatientCode, normaliseCode } from "@/lib/format";
 import { AGE_BANDS, type Answer, type Question } from "@/lib/types";
 
 const PAGE_SIZE = 5;
@@ -36,10 +37,11 @@ function Assess() {
   const [phase, setPhase] = useState<"form" | "checking" | "offline">("form");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [patientErrors, setPatientErrors] = useState<Partial<Record<"ref" | "age" | "sex", string>>>({});
+  const [checkingCode, setCheckingCode] = useState(false);
   const [thinking, setThinking] = useState(false);
   const [nextError, setNextError] = useState<"offline" | string | null>(null);
 
-  const { patientRef, ageBand, sex, answers, step, mode, trail } = draft;
+  const { returning, patientRef, ageBand, sex, answers, step, mode, trail } = draft;
   const adaptive = mode === "adaptive";
   const update = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
@@ -73,7 +75,9 @@ function Assess() {
   }, [questions]);
 
   const totalSteps = pages.length + 1;
-  const ref = patientRef.trim();
+  const ref = returning ? normaliseCode(patientRef) : "";
+  // Shown in the top bar while the questions are asked; a new patient's code comes with the result.
+  const refShown = ref || "New patient";
   const dangerQuestions = (questions ?? []).filter((q) => q.is_danger_sign);
   // Every danger sign answered yes or no, with at least one yes: the result is urgent
   // whatever the other answers are.
@@ -86,14 +90,32 @@ function Assess() {
     router.push("/");
   }
 
-  function toQuestions() {
+  async function toQuestions() {
     const errors = {
-      ref: ref ? undefined : "Enter a patient code",
+      ref: !returning ? undefined
+        : !ref ? "Enter the code from the patient's card"
+        : !isPatientCode(ref) ? "Codes look like P-7K3QXM. Check the card." : undefined,
       age: ageBand ? undefined : "Choose an age group",
       sex: sex ? undefined : "Choose female or male",
     };
     setPatientErrors(errors);
-    if (!errors.ref && !errors.age && !errors.sex) update({ step: 1 });
+    if (errors.ref || errors.age || errors.sex) return;
+    // A returning patient's code is checked now, not after all the questions. Without a
+    // connection the check is skipped; the backend checks again when the result is saved.
+    if (returning && session) {
+      setCheckingCode(true);
+      try {
+        if (!(await api.patientCodeIssued(session.token, ref))) {
+          setPatientErrors({ ref: "No patient has this code. Check the card, or choose New patient." });
+          return;
+        }
+      } catch (e) {
+        if (guard(e)) return;
+      } finally {
+        setCheckingCode(false);
+      }
+    }
+    update({ step: 1, patientRef: ref });
   }
 
   // Every question not asked goes as "Not asked": after the adaptive questions stop, or when a
@@ -105,7 +127,9 @@ function Assess() {
     setSubmitError(null);
     const sent = Object.fromEntries(questions.map((q) => [q.code, given[q.code] ?? "unknown"]));
     try {
-      const result = await api.submitAssessment(session.token, { patient_ref: ref, age_band: ageBand, sex, answers: sent });
+      const result = await api.submitAssessment(session.token, {
+        ...(returning ? { patient_ref: ref } : {}), age_band: ageBand, sex, answers: sent,
+      });
       clearDraft();
       router.replace(`/result/${result.id}`);
     } catch (e) {
@@ -177,7 +201,7 @@ function Assess() {
     );
   }
 
-  const codeBar = <TopBar left={<TopTitle>New assessment</TopTitle>} right={<Code>{ref}</Code>} width="narrow" />;
+  const codeBar = <TopBar left={<TopTitle>New assessment</TopTitle>} right={<Code>{refShown}</Code>} width="narrow" />;
 
   /* ---------- sending ---------- */
   if (phase === "checking") {
@@ -224,11 +248,24 @@ function Assess() {
         <TopBar left={<div className="flex items-center"><BackLink label="Cancel" onClick={cancel} /><TopTitle>New assessment</TopTitle></div>} width="narrow" />
         <StepHeader title="Patient" step={1} total={totalSteps} width="narrow" />
         <Body className="gap-6" width="narrow">
-          <Field label="Patient code" error={patientErrors.ref && !ref ? patientErrors.ref : null}
-            help={<span className="flex items-start gap-2 text-ink"><span aria-hidden className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border-2 border-ink text-[12px] font-bold">!</span><span>Use a code only. <b>Never</b> write the patient&apos;s name or ID number.</span></span>}>
-            <input className={`${inputClass(!!patientErrors.ref && !ref, true)} text-heading font-bold`} value={patientRef}
-              onChange={(e) => update({ patientRef: e.target.value })} placeholder="P-017" maxLength={40} autoComplete="off" />
-          </Field>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 text-label font-bold">Patient code</legend>
+            <div className="grid grid-cols-2 gap-2">
+              <ChoiceTile selected={!returning} onClick={() => { update({ returning: false, patientRef: "" }); setPatientErrors((p) => ({ ...p, ref: undefined })); }}>New patient</ChoiceTile>
+              <ChoiceTile selected={returning} onClick={() => update({ returning: true })}>Returning patient</ChoiceTile>
+            </div>
+            {!returning && (
+              <p className="text-small text-ink-soft">A patient code is created with the result. Write it on the patient&apos;s card for their next visit.</p>
+            )}
+          </fieldset>
+          {returning && (
+            <Field label="Code from the patient's card" error={patientErrors.ref ?? null}
+              help={<span className="text-ink-soft">The code given at their first visit, such as P-7K3QXM. No names or ID numbers are ever used.</span>}>
+              <input className={`${inputClass(!!patientErrors.ref, true)} text-heading font-bold uppercase`} value={patientRef}
+                onChange={(e) => { update({ patientRef: e.target.value }); setPatientErrors((p) => ({ ...p, ref: undefined })); }}
+                placeholder="P-7K3QXM" maxLength={12} autoComplete="off" autoCapitalize="characters" spellCheck={false} />
+            </Field>
+          )}
           <fieldset className="flex flex-col gap-2">
             <legend className="mb-2 text-label font-bold">Age (years)</legend>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
@@ -247,7 +284,7 @@ function Assess() {
             {patientErrors.sex && !sex && <FieldError>{patientErrors.sex}</FieldError>}
           </fieldset>
         </Body>
-        <BottomBar width="narrow"><Button onClick={toQuestions}>Next: questions →</Button></BottomBar>
+        <BottomBar width="narrow"><Button onClick={toQuestions} loading={checkingCode}>{checkingCode ? "Checking the code…" : "Next: questions →"}</Button></BottomBar>
       </>
     );
   }
@@ -326,7 +363,7 @@ function Assess() {
     const dangerDone = dangerQuestions.every((q) => answers[q.code] === "yes" || answers[q.code] === "no");
     return (
       <>
-        <TopBar left={<BackLink label="Patient" onClick={() => update({ step: 0 })} />} right={<Code>{ref}</Code>} width="medium" />
+        <TopBar left={<BackLink label="Patient" onClick={() => update({ step: 0 })} />} right={<Code>{refShown}</Code>} width="medium" />
         <AdaptiveHeader title="Danger signs first" detail="Questions 1–3" width="medium" />
         <main className="flex-1 px-4">
           <div className={contained("medium")}>
@@ -356,7 +393,7 @@ function Assess() {
       const number = dangerQuestions.length + trail.length;
       return (
         <>
-          <TopBar left={<BackLink label="Back" onClick={backAdaptive} />} right={<Code>{ref}</Code>} width="medium" />
+          <TopBar left={<BackLink label="Back" onClick={backAdaptive} />} right={<Code>{refShown}</Code>} width="medium" />
           <AdaptiveHeader title={`Question ${number}`} detail="Chosen from the answers so far" width="medium" />
           <main className="flex-1 px-4">
             <div className={contained("medium")}>
@@ -398,7 +435,7 @@ function Assess() {
 
   return (
     <>
-      <TopBar left={<BackLink label={step === 1 ? "Patient" : "Back"} onClick={() => update({ step: step - 1 })} />} right={<Code>{ref}</Code>} width="medium" />
+      <TopBar left={<BackLink label={step === 1 ? "Patient" : "Back"} onClick={() => update({ step: step - 1 })} />} right={<Code>{refShown}</Code>} width="medium" />
       <StepHeader title={`Questions ${first}–${first + page.length - 1} of ${questions.length}`} step={step + 1} total={totalSteps} width="medium" />
       <main className="flex-1 px-4">
         <div className={contained("medium")}>

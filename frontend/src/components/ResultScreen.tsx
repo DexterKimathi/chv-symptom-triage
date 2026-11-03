@@ -149,6 +149,16 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
             )}
           </div>
           <div className="flex flex-col gap-5">
+            {/* The code is issued with the result, so this is when the volunteer copies it down. */}
+            {!saved && result.patient_ref && (
+              <section className="flex items-center justify-between gap-4 rounded-xl border-2 border-ink p-4">
+                <div>
+                  <h2 className="text-label font-bold">Patient code</h2>
+                  <p className="text-small text-ink-soft">Write it on the patient&apos;s card. Use it if they come back.</p>
+                </div>
+                <Code className="whitespace-nowrap text-heading">{result.patient_ref}</Code>
+              </section>
+            )}
             {!urgent && <Probabilities result={result} />}
             {!urgent && result.explanation.length > 0 && (
               <section>
