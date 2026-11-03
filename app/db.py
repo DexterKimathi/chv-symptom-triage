@@ -14,7 +14,17 @@ class Base(DeclarativeBase):
     pass
 
 
+def normalise_url(url: str) -> str:
+    """Hosting platforms give PostgreSQL URLs as postgres:// or postgresql://, which
+    SQLAlchemy would open with a driver that is not installed. Use psycopg 3."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix):]
+    return url
+
+
 def make_engine(url: str):
+    url = normalise_url(url)
     # SQLite needs this to be shared across FastAPI's worker threads.
     connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
     return create_engine(url, connect_args=connect_args)

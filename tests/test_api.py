@@ -365,3 +365,28 @@ def test_next_question_needs_the_danger_signs_first(client, chv_headers):
 def test_next_question_rejects_unknown_codes_and_anonymous_callers(client, chv_headers):
     assert _next(client, chv_headers, {**{d: "no" for d in DANGER}, "not_a_question": "yes"}).status_code == 422
     assert client.post("/assessments/next", json={"age_band": "15_to_49", "sex": "female", "answers": {}}).status_code == 401
+
+
+# --- deployment configuration ----------------------------------------------- #
+def test_hosting_platform_database_urls_use_psycopg():
+    from app.db import normalise_url
+    assert normalise_url("postgres://u:p@h:5432/db") == "postgresql+psycopg://u:p@h:5432/db"
+    assert normalise_url("postgresql://u:p@h/db") == "postgresql+psycopg://u:p@h/db"
+    assert normalise_url("postgresql+psycopg://u:p@h/db") == "postgresql+psycopg://u:p@h/db"
+    assert normalise_url("sqlite:///x.db") == "sqlite:///x.db"
+
+
+def test_seed_passwords_come_from_the_environment_when_set(monkeypatch):
+    from scripts.seed import DEMO_USERS, password_for
+    admin, chv = DEMO_USERS[0], DEMO_USERS[1]
+    assert password_for(admin) == admin["password"]
+    monkeypatch.setenv("SEED_ADMIN_PASSWORD", "a-strong-deployment-secret")
+    monkeypatch.setenv("SEED_CHV_PASSWORD", "another-strong-secret")
+    assert password_for(admin) == "a-strong-deployment-secret"
+    assert password_for(chv) == "another-strong-secret"
+
+
+def test_seed_never_prints_a_database_password():
+    from scripts.seed import masked
+    assert masked("postgresql://chv:secretpw@host:5432/db") == "postgresql://chv:***@host:5432/db"
+    assert masked("sqlite:///chv.db") == "sqlite:///chv.db"
