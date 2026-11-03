@@ -96,7 +96,7 @@ def test_malaria_like_answers_return_ranked_result(client, chv_headers, make_ans
     assert body["outcome"] == "likely_condition"
     assert (body["patient_ref"], body["age_band"], body["sex"]) == ("T-1", "15_to_49", "female")
     assert body["top"][0]["code"] == "malaria"
-    assert len(body["top"]) == 3
+    assert len(body["top"]) == 5  # every condition, best first
     probs = [t["probability"] for t in body["top"]]
     assert probs == sorted(probs, reverse=True)
     assert body["explanation"], "a named result must say what it was based on"
@@ -314,3 +314,54 @@ def test_login_accepts_international_spelling(client):
 def test_login_rejects_malformed_phone(client):
     r = client.post("/auth/login", json={"phone": "abcdefg", "password": "anything"})
     assert r.status_code == 422
+
+
+# --- adaptive questioning --------------------------------------------------- #
+DANGER = ("lethargy_reduced_alertness", "unable_to_drink_or_feed", "convulsions")
+
+
+def _next(client, headers, answers, age="15_to_49", sex="female"):
+    return client.post("/assessments/next", headers=headers, json={"age_band": age, "sex": sex, "answers": answers})
+
+
+def test_next_question_asks_something_new_after_the_danger_signs(client, chv_headers):
+    r = _next(client, chv_headers, {d: "no" for d in DANGER})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["done"] is False and body["asked"] == 3 and body["total"] == 35
+    assert body["next_question"] and body["next_question"] not in DANGER
+
+
+def test_next_question_stops_at_a_danger_sign(client, chv_headers):
+    body = _next(client, chv_headers, {**{d: "no" for d in DANGER}, "convulsions": "yes"}).json()
+    assert body["done"] is True and body["reason"] == "danger_sign"
+
+
+def test_next_question_stops_when_the_model_is_confident(client, chv_headers):
+    answers = {d: "no" for d in DANGER} | {s: "yes" for s in MALARIA}
+    body = _next(client, chv_headers, answers).json()
+    assert body["done"] is True and body["reason"] == "confident"
+
+
+def test_following_the_questions_reaches_a_result_before_all_35(client, chv_headers, make_answers):
+    target = make_answers(yes=MALARIA)
+    answers = {d: "no" for d in DANGER}
+    for _ in range(35):
+        body = _next(client, chv_headers, answers).json()
+        if body["done"]:
+            break
+        answers[body["next_question"]] = target[body["next_question"]]
+    assert body["done"] and len(answers) < 35
+    full = {code: answers.get(code, "unknown") for code in target}
+    r = _assess(client, chv_headers, full)
+    assert r.status_code == 201 and r.json()["top"][0]["code"] == "malaria"
+
+
+def test_next_question_needs_the_danger_signs_first(client, chv_headers):
+    assert _next(client, chv_headers, {}).status_code == 422
+    assert _next(client, chv_headers, {d: "unknown" for d in DANGER}).status_code == 422
+
+
+def test_next_question_rejects_unknown_codes_and_anonymous_callers(client, chv_headers):
+    assert _next(client, chv_headers, {**{d: "no" for d in DANGER}, "not_a_question": "yes"}).status_code == 422
+    assert client.post("/assessments/next", json={"age_band": "15_to_49", "sex": "female", "answers": {}}).status_code == 401
