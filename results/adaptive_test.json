@@ -1,0 +1,17 @@
+{
+ "stop_threshold": 0.85,
+ "patients": 2999,
+ "urgent_share": 0.20840280093364455,
+ "mean_questions_all": 17.61020340113371,
+ "mean_questions_non_urgent": 21.456613310867734,
+ "median_questions_non_urgent": 18.0,
+ "share_stopping_before_35_non_urgent": 0.6874473462510531,
+ "agreement_with_full_non_urgent": 0.9953664700926707,
+ "macro_f1_adaptive_non_urgent": 0.8543183571455801,
+ "macro_f1_full_non_urgent": 0.8576205470922902,
+ "recall_malaria_adaptive": 0.8355437665782494,
+ "recall_malaria_full": 0.8381962864721485,
+ "recall_urti_pneumonia_adaptive": 0.9180633147113594,
+ "recall_urti_pneumonia_full": 0.9180633147113594,
+ "note": "Second, declared use of the test partition; every setting was fixed on validation first."
+}
