@@ -149,7 +149,7 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
             )}
           </div>
           <div className="flex flex-col gap-5">
-            {!urgent && result.outcome === "likely_condition" && <LessLikely result={result} />}
+            {!urgent && <Probabilities result={result} />}
             {!urgent && result.explanation.length > 0 && (
               <section>
                 <h2 className="text-label font-bold">Based on:</h2>
@@ -235,16 +235,24 @@ function WhatToDo({ level, guidance }: { level: string; guidance: string }) {
   );
 }
 
-function LessLikely({ result }: { result: Assessment }) {
-  const others = result.top.slice(1);
-  if (others.length === 0) return null;
+/** The model's probability for each condition, as a list with bars. On a likely result the
+ *  named condition is left out ("Less likely"); on a fallback result every condition is shown. */
+function Probabilities({ result }: { result: Assessment }) {
+  const named = result.outcome === "likely_condition";
+  const rows = named ? result.top.slice(1) : result.top;
+  if (rows.length === 0) return null;
   return (
     <section>
-      <h2 className="text-label font-bold">Less likely</h2>
-      {others.map((c) => (
-        <div key={c.code} className="flex justify-between border-b border-divider py-3 text-body">
-          <span>{c.name}</span>
-          <span className="text-ink-soft">{percent(c.probability)}</span>
+      <h2 className="text-label font-bold">{named ? "Less likely" : "How likely each condition is"}</h2>
+      {rows.map((c) => (
+        <div key={c.code} className="border-b border-divider py-3">
+          <div className="flex justify-between text-body">
+            <span>{c.name}</span>
+            <span className="text-ink-soft">{percent(c.probability)}</span>
+          </div>
+          <div className="mt-2 h-2 overflow-hidden rounded bg-track" aria-hidden>
+            <div className="h-full rounded bg-ink-soft" style={{ width: `${Math.max(1, Math.min(99, Math.round(c.probability * 100)))}%` }} />
+          </div>
         </div>
       ))}
     </section>
