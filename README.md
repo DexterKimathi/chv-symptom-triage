@@ -56,7 +56,7 @@ and the deployed frontend URL in production. A different port counts as a differ
 |---|---|---|
 | `/login` | everyone | Phone number and password |
 | `/` | logged in | Volunteer name, start an assessment, recent assessments |
-| `/assess` | logged in | Patient code, age and sex, then 35 questions in 7 pages of 5, danger signs first. Next unlocks when all 5 are answered. Danger signs take Yes or No only; once they are answered with a Yes, "Get urgent result now" sends the result straight away |
+| `/assess` | logged in | Patient code, age and sex, then the three danger signs (Yes or No only). After that the app asks one question at a time, each chosen by the model from the answers so far (`POST /assessments/next`), and stops once it is confident: about half of the 35 questions on average. "Answer all 35 questions instead" switches to the full checklist in seven pages of five, keeping the answers given. A danger sign answered Yes gives the urgent result straight away |
 | `/result/[id]` | logged in | The result straight after sending |
 | `/history/[id]` | logged in | A past result, read-only, exactly as first shown |
 | `/admin` | admins | Add a volunteer account |

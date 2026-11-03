@@ -13,10 +13,14 @@ export interface Draft {
   sex: Sex | null;
   answers: Record<string, Answer>;
   step: number;
+  /** "adaptive": the model picks each question after the danger signs. "full": all 35, five per page. */
+  mode: "adaptive" | "full";
+  /** In adaptive mode, the questions asked after the danger signs, in order; the last is on screen. */
+  trail: string[];
 }
 
 export const emptyDraft = (userId: string | null): Draft =>
-  ({ userId, patientRef: "", ageBand: null, sex: null, answers: {}, step: 0 });
+  ({ userId, patientRef: "", ageBand: null, sex: null, answers: {}, step: 0, mode: "adaptive", trail: [] });
 
 function readRaw(): Partial<Draft> | null {
   try {
@@ -58,7 +62,10 @@ export function reconcileDraft(draft: Draft, questions: Question[], pageSize: nu
   const pages = Math.ceil(questions.length / pageSize);
   let step = Number.isInteger(draft.step) ? Math.min(Math.max(draft.step, 0), pages) : 0;
   if (!patientRef.trim() || !ageBand || !sex) step = 0;
-  return { ...draft, patientRef, ageBand, sex, answers, step };
+  const mode = draft.mode === "full" ? "full" : "adaptive";
+  const trail = Array.isArray(draft.trail) ? draft.trail.filter((c) => codes.has(c) && !danger.has(c)) : [];
+  if (mode === "adaptive") step = trail.length ? Math.min(step, 2) : Math.min(step, 1);
+  return { ...draft, patientRef, ageBand, sex, answers, step, mode, trail };
 }
 
 export function saveDraft(draft: Draft) {
