@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import os
+import re
 import sys
 from pathlib import Path
 
@@ -88,6 +90,20 @@ DEMO_USERS = [
 ]
 
 
+# On a deployment, set these so the published demo passwords never work there. They apply
+# only when an account is first created; an existing account keeps its password.
+PASSWORD_ENV = {"admin": "SEED_ADMIN_PASSWORD", "chv": "SEED_CHV_PASSWORD"}
+
+
+def masked(url: str) -> str:
+    """The database URL with any password hidden: deployment logs are kept."""
+    return re.sub(r"//([^:/@]+):[^@]*@", r"//\g<1>:***@", url)
+
+
+def password_for(user: dict) -> str:
+    return os.environ.get(PASSWORD_ENV[user["role"]]) or user["password"]
+
+
 def load_questions() -> list[dict]:
     with SCHEMA_CSV.open(encoding="utf-8") as fh:
         rows = [r for r in csv.DictReader(fh) if r["data_type"] == "binary"]
@@ -139,18 +155,20 @@ def main() -> int:
         for u in DEMO_USERS:
             if not db.scalar(select(User).where(User.phone == u["phone"])):
                 db.add(User(name=u["name"], phone=u["phone"], role=u["role"], area=u["area"],
-                            password_hash=hash_password(u["password"])))
+                            password_hash=hash_password(password_for(u))))
                 added["users"] += 1
         db.commit()
 
-    print(f"Database: {get_settings().database_url}")
+    # Never print a database password: deployment logs are kept.
+    print(f"Database: {masked(get_settings().database_url)}")
     print(f"Added {added['questions']} questions, {added['conditions']} conditions, "
           f"{added['users']} users.")
     print(f"Questions match the model bundle ({len(questions)} codes, "
           f"{sum(q['is_danger_sign'] for q in questions)} danger signs).")
-    print("\nDemo logins (local and check-in use only):")
+    print("\nLogins:")
     for u in DEMO_USERS:
-        print(f"  {u['role']:5s}  {u['phone']}  /  {u['password']}")
+        shown = "(set by " + PASSWORD_ENV[u["role"]] + ")" if os.environ.get(PASSWORD_ENV[u["role"]]) else u["password"]
+        print(f"  {u['role']:5s}  {u['phone']}  /  {shown}")
     return 0
 
 
