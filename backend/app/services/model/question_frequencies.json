@@ -1,0 +1,960 @@
+{
+ "description": "P(answer | condition) from the training partition, Laplace-smoothed. Used to choose the next question.",
+ "model_version": "v1.0",
+ "config_hash": "e5a754c9a8edf02dd6f3aa39c686366adfaf8c3d201f0e5ecd3724ae66b9b178",
+ "stop_threshold": 0.85,
+ "conditions": [
+  "diarrhoeal",
+  "malaria",
+  "typhoid",
+  "urti_pneumonia",
+  "uti"
+ ],
+ "questions": {
+  "fever_current": {
+   "diarrhoeal": {
+    "unknown": 0.045341,
+    "no": 0.744377,
+    "yes": 0.210282
+   },
+   "malaria": {
+    "unknown": 0.053748,
+    "no": 0.169731,
+    "yes": 0.776521
+   },
+   "typhoid": {
+    "unknown": 0.050823,
+    "no": 0.156764,
+    "yes": 0.792412
+   },
+   "urti_pneumonia": {
+    "unknown": 0.043587,
+    "no": 0.370847,
+    "yes": 0.585566
+   },
+   "uti": {
+    "unknown": 0.048318,
+    "no": 0.758053,
+    "yes": 0.193629
+   }
+  },
+  "fever_over_3_days": {
+   "diarrhoeal": {
+    "unknown": 0.089968,
+    "no": 0.892895,
+    "yes": 0.017137
+   },
+   "malaria": {
+    "unknown": 0.100071,
+    "no": 0.740806,
+    "yes": 0.159123
+   },
+   "typhoid": {
+    "unknown": 0.092341,
+    "no": 0.380816,
+    "yes": 0.526843
+   },
+   "urti_pneumonia": {
+    "unknown": 0.090747,
+    "no": 0.871383,
+    "yes": 0.037871
+   },
+   "uti": {
+    "unknown": 0.093414,
+    "no": 0.862563,
+    "yes": 0.044023
+   }
+  },
+  "chills_rigors": {
+   "diarrhoeal": {
+    "unknown": 0.04784,
+    "no": 0.89468,
+    "yes": 0.057479
+   },
+   "malaria": {
+    "unknown": 0.049859,
+    "no": 0.418317,
+    "yes": 0.531825
+   },
+   "typhoid": {
+    "unknown": 0.04796,
+    "no": 0.74481,
+    "yes": 0.20723
+   },
+   "urti_pneumonia": {
+    "unknown": 0.050018,
+    "no": 0.89139,
+    "yes": 0.058592
+   },
+   "uti": {
+    "unknown": 0.051897,
+    "no": 0.895848,
+    "yes": 0.052255
+   }
+  },
+  "drenching_sweats": {
+   "diarrhoeal": {
+    "unknown": 0.045341,
+    "no": 0.898965,
+    "yes": 0.055694
+   },
+   "malaria": {
+    "unknown": 0.05587,
+    "no": 0.571429,
+    "yes": 0.372702
+   },
+   "typhoid": {
+    "unknown": 0.045812,
+    "no": 0.898712,
+    "yes": 0.055476
+   },
+   "urti_pneumonia": {
+    "unknown": 0.056091,
+    "no": 0.891033,
+    "yes": 0.052876
+   },
+   "uti": {
+    "unknown": 0.037938,
+    "no": 0.909807,
+    "yes": 0.052255
+   }
+  },
+  "headache": {
+   "diarrhoeal": {
+    "unknown": 0.044984,
+    "no": 0.893966,
+    "yes": 0.06105
+   },
+   "malaria": {
+    "unknown": 0.049151,
+    "no": 0.407709,
+    "yes": 0.54314
+   },
+   "typhoid": {
+    "unknown": 0.049392,
+    "no": 0.385827,
+    "yes": 0.564782
+   },
+   "urti_pneumonia": {
+    "unknown": 0.050732,
+    "no": 0.739907,
+    "yes": 0.20936
+   },
+   "uti": {
+    "unknown": 0.050823,
+    "no": 0.897996,
+    "yes": 0.051181
+   }
+  },
+  "body_aches": {
+   "diarrhoeal": {
+    "unknown": 0.055694,
+    "no": 0.890396,
+    "yes": 0.053909
+   },
+   "malaria": {
+    "unknown": 0.045615,
+    "no": 0.404526,
+    "yes": 0.549859
+   },
+   "typhoid": {
+    "unknown": 0.042233,
+    "no": 0.7466,
+    "yes": 0.211167
+   },
+   "urti_pneumonia": {
+    "unknown": 0.050375,
+    "no": 0.742408,
+    "yes": 0.207217
+   },
+   "uti": {
+    "unknown": 0.048318,
+    "no": 0.901575,
+    "yes": 0.050107
+   }
+  },
+  "fatigue_weakness": {
+   "diarrhoeal": {
+    "unknown": 0.047126,
+    "no": 0.761157,
+    "yes": 0.191717
+   },
+   "malaria": {
+    "unknown": 0.051273,
+    "no": 0.399929,
+    "yes": 0.548798
+   },
+   "typhoid": {
+    "unknown": 0.058339,
+    "no": 0.213314,
+    "yes": 0.728346
+   },
+   "urti_pneumonia": {
+    "unknown": 0.046802,
+    "no": 0.749553,
+    "yes": 0.203644
+   },
+   "uti": {
+    "unknown": 0.041875,
+    "no": 0.764853,
+    "yes": 0.193271
+   }
+  },
+  "cough": {
+   "diarrhoeal": {
+    "unknown": 0.050339,
+    "no": 0.880043,
+    "yes": 0.069618
+   },
+   "malaria": {
+    "unknown": 0.049505,
+    "no": 0.735856,
+    "yes": 0.214639
+   },
+   "typhoid": {
+    "unknown": 0.049749,
+    "no": 0.458125,
+    "yes": 0.492126
+   },
+   "urti_pneumonia": {
+    "unknown": 0.048946,
+    "no": 0.173991,
+    "yes": 0.777063
+   },
+   "uti": {
+    "unknown": 0.047244,
+    "no": 0.894417,
+    "yes": 0.058339
+   }
+  },
+  "productive_cough": {
+   "diarrhoeal": {
+    "unknown": 0.096394,
+    "no": 0.893252,
+    "yes": 0.010353
+   },
+   "malaria": {
+    "unknown": 0.099364,
+    "no": 0.878713,
+    "yes": 0.021924
+   },
+   "typhoid": {
+    "unknown": 0.091267,
+    "no": 0.880816,
+    "yes": 0.027917
+   },
+   "urti_pneumonia": {
+    "unknown": 0.090389,
+    "no": 0.605216,
+    "yes": 0.304394
+   },
+   "uti": {
+    "unknown": 0.082677,
+    "no": 0.910165,
+    "yes": 0.007158
+   }
+  },
+  "sore_throat": {
+   "diarrhoeal": {
+    "unknown": 0.04427,
+    "no": 0.897537,
+    "yes": 0.058194
+   },
+   "malaria": {
+    "unknown": 0.045969,
+    "no": 0.8971,
+    "yes": 0.056931
+   },
+   "typhoid": {
+    "unknown": 0.04617,
+    "no": 0.893343,
+    "yes": 0.060487
+   },
+   "urti_pneumonia": {
+    "unknown": 0.045373,
+    "no": 0.405145,
+    "yes": 0.549482
+   },
+   "uti": {
+    "unknown": 0.04796,
+    "no": 0.901575,
+    "yes": 0.050465
+   }
+  },
+  "runny_or_blocked_nose": {
+   "diarrhoeal": {
+    "unknown": 0.057122,
+    "no": 0.882185,
+    "yes": 0.060693
+   },
+   "malaria": {
+    "unknown": 0.053041,
+    "no": 0.889321,
+    "yes": 0.057638
+   },
+   "typhoid": {
+    "unknown": 0.053329,
+    "no": 0.892269,
+    "yes": 0.054402
+   },
+   "urti_pneumonia": {
+    "unknown": 0.054662,
+    "no": 0.401572,
+    "yes": 0.543766
+   },
+   "uti": {
+    "unknown": 0.044739,
+    "no": 0.905154,
+    "yes": 0.050107
+   }
+  },
+  "difficulty_breathing": {
+   "diarrhoeal": {
+    "unknown": 0.056408,
+    "no": 0.884327,
+    "yes": 0.059265
+   },
+   "malaria": {
+    "unknown": 0.050212,
+    "no": 0.896747,
+    "yes": 0.053041
+   },
+   "typhoid": {
+    "unknown": 0.045097,
+    "no": 0.902649,
+    "yes": 0.052255
+   },
+   "urti_pneumonia": {
+    "unknown": 0.05109,
+    "no": 0.587353,
+    "yes": 0.361558
+   },
+   "uti": {
+    "unknown": 0.042591,
+    "no": 0.909807,
+    "yes": 0.047602
+   }
+  },
+  "fast_breathing": {
+   "diarrhoeal": {
+    "unknown": 0.048554,
+    "no": 0.896109,
+    "yes": 0.055337
+   },
+   "malaria": {
+    "unknown": 0.046322,
+    "no": 0.896747,
+    "yes": 0.056931
+   },
+   "typhoid": {
+    "unknown": 0.045455,
+    "no": 0.903364,
+    "yes": 0.051181
+   },
+   "urti_pneumonia": {
+    "unknown": 0.043587,
+    "no": 0.585566,
+    "yes": 0.370847
+   },
+   "uti": {
+    "unknown": 0.032928,
+    "no": 0.916249,
+    "yes": 0.050823
+   }
+  },
+  "chest_indrawing": {
+   "diarrhoeal": {
+    "unknown": 0.142806,
+    "no": 0.846126,
+    "yes": 0.011067
+   },
+   "malaria": {
+    "unknown": 0.138967,
+    "no": 0.851132,
+    "yes": 0.009901
+   },
+   "typhoid": {
+    "unknown": 0.134216,
+    "no": 0.853615,
+    "yes": 0.012169
+   },
+   "urti_pneumonia": {
+    "unknown": 0.132547,
+    "no": 0.746695,
+    "yes": 0.120757
+   },
+   "uti": {
+    "unknown": 0.114173,
+    "no": 0.874732,
+    "yes": 0.011095
+   }
+  },
+  "noisy_breathing_wheeze": {
+   "diarrhoeal": {
+    "unknown": 0.051767,
+    "no": 0.885755,
+    "yes": 0.062478
+   },
+   "malaria": {
+    "unknown": 0.048444,
+    "no": 0.88826,
+    "yes": 0.063296
+   },
+   "typhoid": {
+    "unknown": 0.045812,
+    "no": 0.901217,
+    "yes": 0.052971
+   },
+   "urti_pneumonia": {
+    "unknown": 0.052161,
+    "no": 0.578064,
+    "yes": 0.369775
+   },
+   "uti": {
+    "unknown": 0.045455,
+    "no": 0.908733,
+    "yes": 0.045812
+   }
+  },
+  "diarrhoea": {
+   "diarrhoeal": {
+    "unknown": 0.049982,
+    "no": 0.164584,
+    "yes": 0.785434
+   },
+   "malaria": {
+    "unknown": 0.043847,
+    "no": 0.740099,
+    "yes": 0.216054
+   },
+   "typhoid": {
+    "unknown": 0.047244,
+    "no": 0.661417,
+    "yes": 0.291339
+   },
+   "urti_pneumonia": {
+    "unknown": 0.050732,
+    "no": 0.889961,
+    "yes": 0.059307
+   },
+   "uti": {
+    "unknown": 0.045812,
+    "no": 0.899427,
+    "yes": 0.05476
+   }
+  },
+  "diarrhoea_3plus_daily": {
+   "diarrhoeal": {
+    "unknown": 0.09568,
+    "no": 0.475544,
+    "yes": 0.428775
+   },
+   "malaria": {
+    "unknown": 0.08628,
+    "no": 0.895332,
+    "yes": 0.018388
+   },
+   "typhoid": {
+    "unknown": 0.095204,
+    "no": 0.8801,
+    "yes": 0.024696
+   },
+   "urti_pneumonia": {
+    "unknown": 0.095391,
+    "no": 0.893891,
+    "yes": 0.010718
+   },
+   "uti": {
+    "unknown": 0.089477,
+    "no": 0.900859,
+    "yes": 0.009664
+   }
+  },
+  "blood_in_stool": {
+   "diarrhoeal": {
+    "unknown": 0.049625,
+    "no": 0.762942,
+    "yes": 0.187433
+   },
+   "malaria": {
+    "unknown": 0.049151,
+    "no": 0.894625,
+    "yes": 0.056223
+   },
+   "typhoid": {
+    "unknown": 0.055118,
+    "no": 0.749463,
+    "yes": 0.195419
+   },
+   "urti_pneumonia": {
+    "unknown": 0.049661,
+    "no": 0.889246,
+    "yes": 0.061093
+   },
+   "uti": {
+    "unknown": 0.048318,
+    "no": 0.903722,
+    "yes": 0.04796
+   }
+  },
+  "vomiting": {
+   "diarrhoeal": {
+    "unknown": 0.041057,
+    "no": 0.404141,
+    "yes": 0.554802
+   },
+   "malaria": {
+    "unknown": 0.059052,
+    "no": 0.572489,
+    "yes": 0.368458
+   },
+   "typhoid": {
+    "unknown": 0.049392,
+    "no": 0.564782,
+    "yes": 0.385827
+   },
+   "urti_pneumonia": {
+    "unknown": 0.042158,
+    "no": 0.753483,
+    "yes": 0.204359
+   },
+   "uti": {
+    "unknown": 0.042233,
+    "no": 0.900143,
+    "yes": 0.057623
+   }
+  },
+  "nausea": {
+   "diarrhoeal": {
+    "unknown": 0.050696,
+    "no": 0.391646,
+    "yes": 0.557658
+   },
+   "malaria": {
+    "unknown": 0.053748,
+    "no": 0.742221,
+    "yes": 0.204031
+   },
+   "typhoid": {
+    "unknown": 0.050107,
+    "no": 0.575877,
+    "yes": 0.374016
+   },
+   "urti_pneumonia": {
+    "unknown": 0.055377,
+    "no": 0.878885,
+    "yes": 0.065738
+   },
+   "uti": {
+    "unknown": 0.04116,
+    "no": 0.778454,
+    "yes": 0.180387
+   }
+  },
+  "abdominal_pain": {
+   "diarrhoeal": {
+    "unknown": 0.046412,
+    "no": 0.583006,
+    "yes": 0.370582
+   },
+   "malaria": {
+    "unknown": 0.050566,
+    "no": 0.749293,
+    "yes": 0.200141
+   },
+   "typhoid": {
+    "unknown": 0.049749,
+    "no": 0.583393,
+    "yes": 0.366858
+   },
+   "urti_pneumonia": {
+    "unknown": 0.056449,
+    "no": 0.877099,
+    "yes": 0.066452
+   },
+   "uti": {
+    "unknown": 0.045455,
+    "no": 0.581603,
+    "yes": 0.372942
+   }
+  },
+  "poor_appetite": {
+   "diarrhoeal": {
+    "unknown": 0.041414,
+    "no": 0.567297,
+    "yes": 0.391289
+   },
+   "malaria": {
+    "unknown": 0.053041,
+    "no": 0.556577,
+    "yes": 0.390382
+   },
+   "typhoid": {
+    "unknown": 0.055118,
+    "no": 0.374732,
+    "yes": 0.57015
+   },
+   "urti_pneumonia": {
+    "unknown": 0.052519,
+    "no": 0.736334,
+    "yes": 0.211147
+   },
+   "uti": {
+    "unknown": 0.04796,
+    "no": 0.896922,
+    "yes": 0.055118
+   }
+  },
+  "sunken_eyes": {
+   "diarrhoeal": {
+    "unknown": 0.052838,
+    "no": 0.759729,
+    "yes": 0.187433
+   },
+   "malaria": {
+    "unknown": 0.047737,
+    "no": 0.893564,
+    "yes": 0.058699
+   },
+   "typhoid": {
+    "unknown": 0.054044,
+    "no": 0.891553,
+    "yes": 0.054402
+   },
+   "urti_pneumonia": {
+    "unknown": 0.053233,
+    "no": 0.893176,
+    "yes": 0.053591
+   },
+   "uti": {
+    "unknown": 0.049392,
+    "no": 0.900501,
+    "yes": 0.050107
+   }
+  },
+  "slow_skin_pinch": {
+   "diarrhoeal": {
+    "unknown": 0.041414,
+    "no": 0.753302,
+    "yes": 0.205284
+   },
+   "malaria": {
+    "unknown": 0.049505,
+    "no": 0.898161,
+    "yes": 0.052334
+   },
+   "typhoid": {
+    "unknown": 0.054044,
+    "no": 0.895132,
+    "yes": 0.050823
+   },
+   "urti_pneumonia": {
+    "unknown": 0.053591,
+    "no": 0.891033,
+    "yes": 0.055377
+   },
+   "uti": {
+    "unknown": 0.042591,
+    "no": 0.908733,
+    "yes": 0.048676
+   }
+  },
+  "excessive_thirst": {
+   "diarrhoeal": {
+    "unknown": 0.045698,
+    "no": 0.573367,
+    "yes": 0.380935
+   },
+   "malaria": {
+    "unknown": 0.052334,
+    "no": 0.892504,
+    "yes": 0.055163
+   },
+   "typhoid": {
+    "unknown": 0.051897,
+    "no": 0.893701,
+    "yes": 0.054402
+   },
+   "urti_pneumonia": {
+    "unknown": 0.045016,
+    "no": 0.899964,
+    "yes": 0.05502
+   },
+   "uti": {
+    "unknown": 0.044739,
+    "no": 0.900859,
+    "yes": 0.054402
+   }
+  },
+  "lethargy_reduced_alertness": {
+   "diarrhoeal": {
+    "unknown": 0.046412,
+    "no": 0.750089,
+    "yes": 0.203499
+   },
+   "malaria": {
+    "unknown": 0.056223,
+    "no": 0.747525,
+    "yes": 0.196252
+   },
+   "typhoid": {
+    "unknown": 0.052255,
+    "no": 0.895848,
+    "yes": 0.051897
+   },
+   "urti_pneumonia": {
+    "unknown": 0.050375,
+    "no": 0.888532,
+    "yes": 0.061093
+   },
+   "uti": {
+    "unknown": 0.047602,
+    "no": 0.902291,
+    "yes": 0.050107
+   }
+  },
+  "unable_to_drink_or_feed": {
+   "diarrhoeal": {
+    "unknown": 0.179936,
+    "no": 0.70939,
+    "yes": 0.110675
+   },
+   "malaria": {
+    "unknown": 0.192008,
+    "no": 0.774752,
+    "yes": 0.033239
+   },
+   "typhoid": {
+    "unknown": 0.179313,
+    "no": 0.795276,
+    "yes": 0.025412
+   },
+   "urti_pneumonia": {
+    "unknown": 0.175063,
+    "no": 0.798499,
+    "yes": 0.026438
+   },
+   "uti": {
+    "unknown": 0.159986,
+    "no": 0.826056,
+    "yes": 0.013958
+   }
+  },
+  "convulsions": {
+   "diarrhoeal": {
+    "unknown": 0.059979,
+    "no": 0.883256,
+    "yes": 0.056765
+   },
+   "malaria": {
+    "unknown": 0.048091,
+    "no": 0.75884,
+    "yes": 0.193069
+   },
+   "typhoid": {
+    "unknown": 0.044739,
+    "no": 0.889048,
+    "yes": 0.066213
+   },
+   "urti_pneumonia": {
+    "unknown": 0.05502,
+    "no": 0.889603,
+    "yes": 0.055377
+   },
+   "uti": {
+    "unknown": 0.045455,
+    "no": 0.906228,
+    "yes": 0.048318
+   }
+  },
+  "painful_urination": {
+   "diarrhoeal": {
+    "unknown": 0.051053,
+    "no": 0.884327,
+    "yes": 0.06462
+   },
+   "malaria": {
+    "unknown": 0.054455,
+    "no": 0.883663,
+    "yes": 0.061881
+   },
+   "typhoid": {
+    "unknown": 0.050107,
+    "no": 0.894059,
+    "yes": 0.055834
+   },
+   "urti_pneumonia": {
+    "unknown": 0.054305,
+    "no": 0.879243,
+    "yes": 0.066452
+   },
+   "uti": {
+    "unknown": 0.040802,
+    "no": 0.16786,
+    "yes": 0.791339
+   }
+  },
+  "frequent_urination": {
+   "diarrhoeal": {
+    "unknown": 0.043913,
+    "no": 0.906462,
+    "yes": 0.049625
+   },
+   "malaria": {
+    "unknown": 0.048091,
+    "no": 0.893918,
+    "yes": 0.057992
+   },
+   "typhoid": {
+    "unknown": 0.046528,
+    "no": 0.90408,
+    "yes": 0.049392
+   },
+   "urti_pneumonia": {
+    "unknown": 0.051447,
+    "no": 0.894605,
+    "yes": 0.053948
+   },
+   "uti": {
+    "unknown": 0.045097,
+    "no": 0.396564,
+    "yes": 0.558339
+   }
+  },
+  "urinary_urgency": {
+   "diarrhoeal": {
+    "unknown": 0.046769,
+    "no": 0.897894,
+    "yes": 0.055337
+   },
+   "malaria": {
+    "unknown": 0.048091,
+    "no": 0.891443,
+    "yes": 0.060467
+   },
+   "typhoid": {
+    "unknown": 0.052613,
+    "no": 0.893701,
+    "yes": 0.053686
+   },
+   "urti_pneumonia": {
+    "unknown": 0.048589,
+    "no": 0.894605,
+    "yes": 0.056806
+   },
+   "uti": {
+    "unknown": 0.049749,
+    "no": 0.38869,
+    "yes": 0.56156
+   }
+  },
+  "cloudy_or_foul_urine": {
+   "diarrhoeal": {
+    "unknown": 0.052481,
+    "no": 0.893609,
+    "yes": 0.053909
+   },
+   "malaria": {
+    "unknown": 0.04314,
+    "no": 0.896393,
+    "yes": 0.060467
+   },
+   "typhoid": {
+    "unknown": 0.046886,
+    "no": 0.89048,
+    "yes": 0.062634
+   },
+   "urti_pneumonia": {
+    "unknown": 0.048232,
+    "no": 0.897821,
+    "yes": 0.053948
+   },
+   "uti": {
+    "unknown": 0.050107,
+    "no": 0.581603,
+    "yes": 0.368289
+   }
+  },
+  "flank_or_lower_back_pain": {
+   "diarrhoeal": {
+    "unknown": 0.044627,
+    "no": 0.900036,
+    "yes": 0.055337
+   },
+   "malaria": {
+    "unknown": 0.049859,
+    "no": 0.890736,
+    "yes": 0.059406
+   },
+   "typhoid": {
+    "unknown": 0.051539,
+    "no": 0.895848,
+    "yes": 0.052613
+   },
+   "urti_pneumonia": {
+    "unknown": 0.055377,
+    "no": 0.882815,
+    "yes": 0.061808
+   },
+   "uti": {
+    "unknown": 0.046528,
+    "no": 0.759843,
+    "yes": 0.193629
+   }
+  },
+  "jaundice_yellow_eyes": {
+   "diarrhoeal": {
+    "unknown": 0.056765,
+    "no": 0.890039,
+    "yes": 0.053195
+   },
+   "malaria": {
+    "unknown": 0.051627,
+    "no": 0.756365,
+    "yes": 0.192008
+   },
+   "typhoid": {
+    "unknown": 0.047244,
+    "no": 0.735505,
+    "yes": 0.217251
+   },
+   "urti_pneumonia": {
+    "unknown": 0.048232,
+    "no": 0.892462,
+    "yes": 0.059307
+   },
+   "uti": {
+    "unknown": 0.041875,
+    "no": 0.906586,
+    "yes": 0.051539
+   }
+  },
+  "skin_rash": {
+   "diarrhoeal": {
+    "unknown": 0.048554,
+    "no": 0.901821,
+    "yes": 0.049625
+   },
+   "malaria": {
+    "unknown": 0.051273,
+    "no": 0.897808,
+    "yes": 0.050919
+   },
+   "typhoid": {
+    "unknown": 0.057981,
+    "no": 0.804939,
+    "yes": 0.137079
+   },
+   "urti_pneumonia": {
+    "unknown": 0.051447,
+    "no": 0.888532,
+    "yes": 0.060021
+   },
+   "uti": {
+    "unknown": 0.04796,
+    "no": 0.903006,
+    "yes": 0.049034
+   }
+  }
+ }
+}

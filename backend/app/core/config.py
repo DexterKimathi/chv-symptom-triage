@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
 
     model_path: str = str(ROOT / "app" / "services" / "model" / "model.joblib")
+    # Answer frequencies and stop threshold for adaptive questioning (ML repo, src/adaptive.py).
+    questions_path: str = str(ROOT / "app" / "services" / "model" / "question_frequencies.json")
     # Browser origins allowed to call the API: the Next.js app in development. Add the
     # deployed frontend URL here (comma-separated) when it goes live.
     cors_origins: str = "http://localhost:3000"

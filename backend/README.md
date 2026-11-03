@@ -10,9 +10,10 @@
 
 ## Core flow
 
-A community health volunteer answers 35 yes/no symptom questions; the backend checks for
-danger signs, runs the model, explains the result and returns referral guidance, and the
-assessment is saved.
+A community health volunteer answers the three danger-sign questions, then the questions the
+model picks one at a time (`POST /assessments/next`), usually about half of the 35; the
+backend checks for danger signs, runs the model, explains the result and returns referral
+guidance, and the assessment is saved. The full 35-question checklist remains available.
 
 ## Stack
 
@@ -70,7 +71,7 @@ it with `docker compose up -d` and point the tests at the test database:
 $env:TEST_DATABASE_URL="postgresql+psycopg://chv:chv-local@localhost:5432/chv_test"; pytest
 ```
 
-Both should report 49 passed.
+Both should report 55 passed.
 
 ## Model
 
@@ -104,6 +105,6 @@ These are not optional and are checked before anything else runs:
 ## Status
 
 - [x] Week 1: backend endpoints
-- [x] Week 2: tests + real model (49 tests; model v1.0 evaluated on the held-out test set)
+- [x] Week 2: tests + real model (55 tests; model v1.0 evaluated on the held-out test set)
 - [ ] Week 3: frontend
 - [ ] Week 4: deployed + demo
