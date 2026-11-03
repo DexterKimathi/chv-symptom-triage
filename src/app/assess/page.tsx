@@ -249,7 +249,7 @@ function Assess() {
         <StepHeader title="Patient" step={1} total={totalSteps} width="narrow" />
         <Body className="gap-6" width="narrow">
           <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 text-label font-bold">Patient</legend>
+            <legend className="mb-2 text-label font-bold">Patient code</legend>
             <div className="grid grid-cols-2 gap-2">
               <ChoiceTile selected={!returning} onClick={() => { update({ returning: false, patientRef: "" }); setPatientErrors((p) => ({ ...p, ref: undefined })); }}>New patient</ChoiceTile>
               <ChoiceTile selected={returning} onClick={() => update({ returning: true })}>Returning patient</ChoiceTile>
@@ -259,7 +259,7 @@ function Assess() {
             )}
           </fieldset>
           {returning && (
-            <Field label="Patient code from their card" error={patientErrors.ref ?? null}
+            <Field label="Code from the patient's card" error={patientErrors.ref ?? null}
               help={<span className="text-ink-soft">The code given at their first visit, such as P-7K3QXM. No names or ID numbers are ever used.</span>}>
               <input className={`${inputClass(!!patientErrors.ref, true)} text-heading font-bold uppercase`} value={patientRef}
                 onChange={(e) => { update({ patientRef: e.target.value }); setPatientErrors((p) => ({ ...p, ref: undefined })); }}
