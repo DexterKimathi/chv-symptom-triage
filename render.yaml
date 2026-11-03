@@ -1,0 +1,50 @@
+# Render Blueprint: the backend and web client as two free web services in Frankfurt,
+# next to the existing PostgreSQL database chv-triage-db.
+#
+# Dashboard > New > Blueprint > this repository. Render then asks for the values marked
+# `sync: false`; nothing secret is stored here.
+#   DATABASE_URL         chv-triage-db > Connect > Internal Database URL
+#   SEED_ADMIN_PASSWORD  passwords for the seeded accounts, so the demo passwords
+#   SEED_CHV_PASSWORD    published in the README never work on the deployment
+#
+# If Render gives a service a different address (the name is taken), update CORS_ORIGINS
+# and NEXT_PUBLIC_API_BASE_URL to match and redeploy the web client.
+services:
+  - type: web
+    name: chv-triage-api
+    runtime: python
+    region: frankfurt
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    # The seed only adds what is missing, so it is safe on every start.
+    startCommand: python -m scripts.seed && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10  # scikit-learn must match the version the model was trained with
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_CHV_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://chv-triage.onrender.com
+
+  - type: web
+    name: chv-triage
+    runtime: node
+    region: frankfurt
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Written into the app at build time; the build stops if it is missing.
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://chv-triage-api.onrender.com
