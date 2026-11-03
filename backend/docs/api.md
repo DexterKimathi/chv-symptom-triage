@@ -13,6 +13,7 @@ Every endpoint except `/health` and `/auth/login` needs `Authorization: Bearer <
 | GET | `/questions` | CHV, admin | The 35 checklist questions in display order |
 | POST | `/assessments/next` | CHV, admin | Adaptive questioning: the next question to ask, or done. Saves nothing |
 | POST | `/assessments` | CHV, admin | **The core flow.** Answers in, referral decision out, saved |
+| GET | `/assessments/patients/{code}` | CHV, admin | `204` if a returning patient's code has been issued, `404` if not |
 | GET | `/assessments` | CHV, admin | History. A CHV sees only their own; an admin sees all |
 | GET | `/assessments/{id}` | CHV, admin | One assessment, exactly as it was shown at the time |
 | GET | `/conditions/{id}` | CHV, admin | Description, referral level and guidance for a condition |
@@ -63,7 +64,6 @@ assessment to `POST /assessments` with every unasked question as `unknown`.
 
 ```json
 {
-  "patient_ref": "P-001",
   "age_band": "15_to_49",
   "sex": "female",
   "answers": {
@@ -75,7 +75,11 @@ assessment to `POST /assessments` with every unasked question as `unknown`.
 }
 ```
 
-- `patient_ref`: an anonymous code chosen by the CHV. **Never a name or ID number.**
+- `patient_ref`: **leave it out for a new patient.** The system issues a code such as
+  `P-7K3QXM` and returns it with the result, for the CHV to write on the patient's card. For
+  a returning patient, send the code from their first visit; case and spaces are ignored.
+  A code must be `P-` and six characters from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789` (no 0/O or
+  1/I) and must already have been issued, so a name or ID number can never be stored here.
 - `age_band`: `under_5` | `5_to_14` | `15_to_49` | `50_plus`
 - `sex`: `female` | `male`
 - `answers`: **every one of the 35 question codes**, each `yes`, `no` or `unknown`.
@@ -112,7 +116,7 @@ patients, correct 90.4% of the time.
 ```json
 {
   "id": 12,
-  "patient_ref": "P-001",
+  "patient_ref": "P-7K3QXM",
   "age_band": "15_to_49",
   "sex": "female",
   "outcome": "likely_condition",
@@ -144,7 +148,7 @@ patients, correct 90.4% of the time.
 | Status | When |
 |---|---|
 | 401 | Missing, invalid or expired token |
-| 422 | A question code missing or unknown, an answer other than yes/no/unknown, a danger sign answered `unknown`, or an invalid age band or sex |
+| 422 | A question code missing or unknown, an answer other than yes/no/unknown, a danger sign answered `unknown`, an invalid age band or sex, or a `patient_ref` that is not an issued code |
 
 ## Other errors
 
