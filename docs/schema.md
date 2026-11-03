@@ -52,7 +52,7 @@ recorded per condition, before any field use.
 |---|---|---|
 | id | int, PK | |
 | chv_id | int, FK users | Who carried out the assessment |
-| patient_ref | string | **Anonymous code only. Never a name or ID number** |
+| patient_ref | string | **Issued by the system** (`P-` and six characters), never typed in, so never a name or ID number |
 | age_band | string | |
 | sex | string | |
 | danger_sign_triggered | bool | |
