@@ -8,6 +8,9 @@ const DRAFT_KEY = "chv-triage-draft";
 
 export interface Draft {
   userId: string | null;
+  /** A new patient is given a code by the backend; a returning one brings the code on their card. */
+  returning: boolean;
+  /** Only for a returning patient. */
   patientRef: string;
   ageBand: AgeBand | null;
   sex: Sex | null;
@@ -20,7 +23,7 @@ export interface Draft {
 }
 
 export const emptyDraft = (userId: string | null): Draft =>
-  ({ userId, patientRef: "", ageBand: null, sex: null, answers: {}, step: 0, mode: "adaptive", trail: [] });
+  ({ userId, returning: false, patientRef: "", ageBand: null, sex: null, answers: {}, step: 0, mode: "adaptive", trail: [] });
 
 function readRaw(): Partial<Draft> | null {
   try {
@@ -57,15 +60,17 @@ export function reconcileDraft(draft: Draft, questions: Question[], pageSize: nu
     answers[code] = value;
   }
   const patientRef = typeof draft.patientRef === "string" ? draft.patientRef : "";
+  // Drafts saved before codes were issued carry a typed code and no flag: treat them as returning.
+  const returning = typeof draft.returning === "boolean" ? draft.returning : patientRef.trim() !== "";
   const ageBand = AGE_BANDS.some((b) => b.value === draft.ageBand) ? draft.ageBand : null;
   const sex = draft.sex === "female" || draft.sex === "male" ? draft.sex : null;
   const pages = Math.ceil(questions.length / pageSize);
   let step = Number.isInteger(draft.step) ? Math.min(Math.max(draft.step, 0), pages) : 0;
-  if (!patientRef.trim() || !ageBand || !sex) step = 0;
+  if ((returning && !patientRef.trim()) || !ageBand || !sex) step = 0;
   const mode = draft.mode === "full" ? "full" : "adaptive";
   const trail = Array.isArray(draft.trail) ? draft.trail.filter((c) => codes.has(c) && !danger.has(c)) : [];
   if (mode === "adaptive") step = trail.length ? Math.min(step, 2) : Math.min(step, 1);
-  return { ...draft, patientRef, ageBand, sex, answers, step, mode, trail };
+  return { ...draft, returning, patientRef, ageBand, sex, answers, step, mode, trail };
 }
 
 export function saveDraft(draft: Draft) {

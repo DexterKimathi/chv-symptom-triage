@@ -53,7 +53,8 @@ export interface NextQuestionResponse {
 }
 
 export interface AssessmentRequest {
-  patient_ref: string;
+  /** Left out for a new patient: the backend issues a code. A returning patient's issued code otherwise. */
+  patient_ref?: string;
   age_band: AgeBand;
   sex: Sex;
   answers: Record<string, Answer>;

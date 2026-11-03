@@ -43,6 +43,12 @@ export function sexLabel(sex?: Sex | null) {
 
 export const refLabel = (ref?: string | null) => ref?.trim() || "No code";
 
+// Patient codes are issued by the backend: P- and six characters, with no 0/O or 1/I.
+const PATIENT_CODE = /^P-[A-HJ-NP-Z2-9]{6}$/;
+/** A code as copied from a card, tidied the way the backend tidies it. */
+export const normaliseCode = (code: string) => code.trim().toUpperCase();
+export const isPatientCode = (code: string) => PATIENT_CODE.test(normaliseCode(code));
+
 // The same rule as the backend: a Kenyan mobile number written 07…, 01…, +2547…, 2547…
 // (or +2541…, 2541…), with or without spaces and hyphens.
 const KENYAN_MOBILE = /^(?:0|\+?254)([17]\d{8})$/;
