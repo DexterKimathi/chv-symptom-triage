@@ -56,7 +56,8 @@ class Assessment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     chv_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
-    # Anonymous code chosen by the CHV. Never a name or national ID number.
+    # Anonymous code issued by the system (app/services/patient_codes.py), so it can never
+    # hold a name or national ID number. A returning patient keeps the code from their first visit.
     patient_ref: Mapped[str] = mapped_column(String(40))
     age_band: Mapped[str] = mapped_column(String(20))
     sex: Mapped[str] = mapped_column(String(10))

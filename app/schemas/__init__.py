@@ -8,6 +8,8 @@ from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator
 
+from app.services import patient_codes
+
 Answer = Literal["yes", "no", "unknown"]
 AgeBand = Literal["under_5", "5_to_14", "15_to_49", "50_plus"]
 Sex = Literal["female", "male"]
@@ -82,10 +84,23 @@ class ConditionOut(BaseModel):
 
 
 # --- assessments ------------------------------------------------------------ #
+def _issued_code_or_none(value: str | None) -> str | None:
+    """Blank means a new patient. Anything else must look like a code the system issued,
+    which also stops a name or ID number being sent in this field."""
+    if value is None or not value.strip():
+        return None
+    code = patient_codes.normalise(value)
+    if not patient_codes.is_well_formed(code):
+        raise ValueError(f"Use the patient code from the patient's card, such as {patient_codes.EXAMPLE}")
+    return code
+
+
 class AssessmentRequest(BaseModel):
-    patient_ref: str = Field(
-        min_length=1, max_length=40,
-        description="Anonymous code chosen by the CHV. Never a name or ID number.",
+    patient_ref: Annotated[str | None, AfterValidator(_issued_code_or_none)] = Field(
+        default=None, max_length=40,
+        description="Leave out for a new patient: the system issues a code, returned with the "
+                    f"result. For a returning patient, the code from their first visit, such as "
+                    f"{patient_codes.EXAMPLE}. Never a name or ID number.",
     )
     age_band: AgeBand
     sex: Sex

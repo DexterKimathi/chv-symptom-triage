@@ -1,12 +1,17 @@
 """One success case and one failure case per endpoint, plus the safety rules."""
 
+import re
+
 MALARIA = {"fever_current", "chills_rigors", "drenching_sweats", "headache",
            "body_aches", "fatigue_weakness"}
 
 
-def _assess(client, headers, answers, ref="T-1", age="15_to_49", sex="female"):
-    return client.post("/assessments", headers=headers, json={
-        "patient_ref": ref, "age_band": age, "sex": sex, "answers": answers})
+def _assess(client, headers, answers, ref=None, age="15_to_49", sex="female"):
+    """A new patient unless `ref` names a returning one."""
+    body = {"age_band": age, "sex": sex, "answers": answers}
+    if ref is not None:
+        body["patient_ref"] = ref
+    return client.post("/assessments", headers=headers, json=body)
 
 
 # --- health ------------------------------------------------------------------ #
@@ -94,7 +99,8 @@ def test_malaria_like_answers_return_ranked_result(client, chv_headers, make_ans
     assert r.status_code == 201
     body = r.json()
     assert body["outcome"] == "likely_condition"
-    assert (body["patient_ref"], body["age_band"], body["sex"]) == ("T-1", "15_to_49", "female")
+    assert (body["age_band"], body["sex"]) == ("15_to_49", "female")
+    assert re.fullmatch(r"P-[A-HJ-NP-Z2-9]{6}", body["patient_ref"])  # issued, not typed
     assert body["top"][0]["code"] == "malaria"
     assert len(body["top"]) == 5  # every condition, best first
     probs = [t["probability"] for t in body["top"]]
@@ -167,19 +173,19 @@ def test_invalid_age_band_is_rejected(client, chv_headers, make_answers):
 
 def test_assessment_requires_login(client, make_answers):
     r = client.post("/assessments", json={
-        "patient_ref": "X", "age_band": "15_to_49", "sex": "male", "answers": make_answers()})
+        "age_band": "15_to_49", "sex": "male", "answers": make_answers()})
     assert r.status_code == 401
 
 
 # --- assessment history ------------------------------------------------------ #
 def test_chv_sees_own_assessments(client, chv_headers, make_answers):
-    created = _assess(client, chv_headers, make_answers(yes=MALARIA), ref="HIST-1").json()
+    created = _assess(client, chv_headers, make_answers(yes=MALARIA)).json()
     listed = client.get("/assessments", headers=chv_headers).json()
     assert created["id"] in {a["id"] for a in listed}
 
 
 def test_chv_cannot_see_another_chvs_assessments(client, chv_headers, other_chv_headers, make_answers):
-    created = _assess(client, chv_headers, make_answers(yes=MALARIA), ref="PRIVATE").json()
+    created = _assess(client, chv_headers, make_answers(yes=MALARIA)).json()
     listed = client.get("/assessments", headers=other_chv_headers).json()
     assert created["id"] not in {a["id"] for a in listed}
 
@@ -193,7 +199,7 @@ def test_get_one_assessment_returns_what_was_shown(client, chv_headers, make_ans
 
 def test_timestamps_are_utc_with_a_timezone(client, chv_headers, make_answers):
     from datetime import datetime, timedelta, timezone
-    created = _assess(client, chv_headers, make_answers(yes=MALARIA), ref="TZ-1").json()
+    created = _assess(client, chv_headers, make_answers(yes=MALARIA)).json()
     fetched = client.get(f"/assessments/{created['id']}", headers=chv_headers).json()
     listed = client.get("/assessments", headers=chv_headers).json()
     for stamp in (created["created_at"], fetched["created_at"], listed[0]["created_at"]):
@@ -390,3 +396,33 @@ def test_seed_never_prints_a_database_password():
     from scripts.seed import masked
     assert masked("postgresql://chv:secretpw@host:5432/db") == "postgresql://chv:***@host:5432/db"
     assert masked("sqlite:///chv.db") == "sqlite:///chv.db"
+
+
+# --- patient codes ----------------------------------------------------------- #
+def test_each_new_patient_gets_a_different_code(client, chv_headers, make_answers):
+    codes = {_assess(client, chv_headers, make_answers()).json()["patient_ref"] for _ in range(5)}
+    assert len(codes) == 5
+
+
+def test_returning_patient_keeps_their_code(client, chv_headers, make_answers):
+    code = _assess(client, chv_headers, make_answers()).json()["patient_ref"]
+    again = _assess(client, chv_headers, make_answers(), ref=f"  {code.lower()} ")  # as copied by hand
+    assert again.status_code == 201
+    assert again.json()["patient_ref"] == code
+
+
+def test_unknown_or_made_up_codes_are_refused(client, chv_headers, make_answers):
+    before = len(client.get("/assessments", headers=chv_headers).json())
+    unknown = _assess(client, chv_headers, make_answers(), ref="P-ABCDEF")
+    assert unknown.status_code == 422 and "P-ABCDEF" in unknown.json()["detail"]
+    for typed in ("Mary Wanjiku", "12345678", "P-017"):  # a name, an ID number, an old-style code
+        assert _assess(client, chv_headers, make_answers(), ref=typed).status_code == 422
+    assert len(client.get("/assessments", headers=chv_headers).json()) == before
+
+
+def test_patient_code_check(client, chv_headers, make_answers):
+    code = _assess(client, chv_headers, make_answers()).json()["patient_ref"]
+    assert client.get(f"/assessments/patients/{code.lower()}", headers=chv_headers).status_code == 204
+    assert client.get("/assessments/patients/P-ABCDEF", headers=chv_headers).status_code == 404
+    assert client.get("/assessments/patients/Mary", headers=chv_headers).status_code == 404
+    assert client.get(f"/assessments/patients/{code}").status_code == 401

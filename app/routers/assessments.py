@@ -17,6 +17,7 @@ from app.schemas import (
     ExplanationItem,
     RankedCondition,
 )
+from app.services import patient_codes
 from app.services.predictor import InvalidAnswers, get_predictor
 from app.services.questioner import get_questioner
 from app.services.triage import DISCLAIMER, decide
@@ -60,6 +61,15 @@ def next_question(body: NextQuestionRequest, user: User = Depends(get_current_us
                                 asked=step.asked, total=len(questioner.codes))
 
 
+@router.get("/patients/{code}", status_code=status.HTTP_204_NO_CONTENT)
+def check_patient_code(code: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)) -> None:
+    """204 when a returning patient's code has been issued, 404 when it has not. Lets the
+    client check a code before the questions start. Reveals nothing about the patient."""
+    code = patient_codes.normalise(code)
+    if not (patient_codes.is_well_formed(code) and patient_codes.is_issued(db, code)):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No patient has the code {code}")
+
+
 @router.post("", response_model=AssessmentResponse, status_code=status.HTTP_201_CREATED)
 def create_assessment(
     body: AssessmentRequest,
@@ -74,6 +84,16 @@ def create_assessment(
         predictor.validate(body.answers)
     except InvalidAnswers as error:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(error))
+
+    # A new patient gets a code here; a returning patient's code must be one already issued.
+    if body.patient_ref is None:
+        patient_ref = patient_codes.new_code(db)
+    elif patient_codes.is_issued(db, body.patient_ref):
+        patient_ref = body.patient_ref
+    else:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
+                            detail=f"No patient has the code {body.patient_ref}. Check the code on the "
+                                   "patient's card, or start them as a new patient.")
 
     # 2. Danger signs are read before the model and override it.
     danger = predictor.danger_signs_present(body.answers)
@@ -96,7 +116,7 @@ def create_assessment(
     questions = {q.code: q for q in db.scalars(select(Question)).all()}
     assessment = Assessment(
         chv_id=user.id,
-        patient_ref=body.patient_ref,
+        patient_ref=patient_ref,
         age_band=body.age_band,
         sex=body.sex,
         danger_sign_triggered=bool(danger),
