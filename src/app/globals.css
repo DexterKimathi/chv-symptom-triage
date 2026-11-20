@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Laptop-width screens held in landscape: where the login page shows its illustration. */
+@custom-variant wide (@media (width >= 64rem) and (orientation: landscape));
+
 /* Tokens from the CHV Triage design system. Red means one thing only: refer urgently. */
 @theme {
   --color-ink: #0f1720;
@@ -55,7 +58,7 @@
   }
   @keyframes drift {
     from { transform: scale(1); }
-    to { transform: scale(1.06) translateY(-1.5%); }
+    to { transform: scale(1.04); }
   }
 }
 
