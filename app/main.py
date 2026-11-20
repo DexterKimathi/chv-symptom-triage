@@ -42,7 +42,8 @@ app.include_router(assessments.router)
 app.include_router(admin.router)
 
 
-@app.get("/health", tags=["system"])
+# HEAD as well as GET: uptime monitors check with HEAD, and a 405 would report the service as down.
+@app.api_route("/health", methods=["GET", "HEAD"], tags=["system"])
 def health() -> dict[str, str]:
     """Liveness check, with the model version and data hash being served."""
     predictor = get_predictor()
