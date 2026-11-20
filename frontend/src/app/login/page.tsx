@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
@@ -7,6 +8,8 @@ import { Button, ErrorNotice, Field, inputClass, PasswordInput } from "@/compone
 import { ApiError, connectionMessage, NetworkError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { normalisePhone } from "@/lib/format";
+
+import visit from "./visit.webp";
 
 export default function LoginPage() {
   const { login, session, ready } = useAuth();
@@ -38,8 +41,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col md:items-center md:justify-center md:bg-canvas md:p-8">
-      <main className="flex flex-1 flex-col gap-6 px-4 pt-10 pb-8 md:w-full md:max-w-md md:flex-none md:rounded-2xl md:bg-white md:p-10 md:shadow-[0_8px_24px_rgba(15,23,32,.10)]">
+    // Phone: the form alone. Tablet: the form on a card. Laptop and wider: the form beside
+    // the illustration.
+    <div className="flex flex-1 flex-col md:items-center md:justify-center md:bg-canvas md:p-8 lg:grid lg:min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-stretch lg:bg-white lg:p-0">
+      <div className="flex flex-1 flex-col md:w-full md:max-w-md md:flex-none lg:max-w-none lg:items-center lg:justify-center lg:p-10">
+      <main className="flex flex-1 flex-col gap-6 px-4 pt-10 pb-8 md:w-full md:max-w-md md:flex-none md:rounded-2xl md:bg-white md:p-10 md:shadow-[0_8px_24px_rgba(15,23,32,.10)] lg:rounded-none lg:p-0 lg:shadow-none lg:motion-safe:animate-rise">
         <div className="flex flex-col gap-3">
           <span aria-hidden className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue text-[32px] leading-none font-bold text-white">+</span>
           <h1 className="text-headline font-bold">CHV Triage</h1>
@@ -70,6 +76,23 @@ export default function LoginPage() {
           {busy ? "On slow data this can take up to a minute." : "Forgot your password? Ask your supervisor to reset it."}
         </p>
       </main>
+      </div>
+
+      {/* Laptop width and wider only. Below that the panel is not displayed, so the lazily
+          loaded image is never downloaded. The caption sits on a band the colour of the
+          illustration's sky, so it never covers the drawing. */}
+      <aside aria-hidden className="hidden flex-col overflow-hidden bg-[#e1f7fd] lg:flex motion-safe:animate-panel-in">
+        <div className="px-14 pt-14 pb-4">
+          <p className="max-w-md text-title font-bold text-blue-dark">Every visit, a clearer next step.</p>
+          <p className="mt-2 max-w-md text-body text-ink-soft">Checks danger signs first, asks only the questions that matter, and refers whenever it is unsure.</p>
+        </div>
+        <div className="relative flex-1 overflow-hidden">
+          <Image src={visit} alt="" fill placeholder="blur" sizes="55vw"
+            className="object-cover object-bottom motion-safe:animate-drift" />
+          {/* Blends the band into the illustration's sky. */}
+          <div className="absolute inset-x-0 top-0 h-10 bg-linear-to-b from-[#e1f7fd] to-transparent" />
+        </div>
+      </aside>
     </div>
   );
 }

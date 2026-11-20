@@ -38,6 +38,25 @@
   --text-label--line-height: 24px;
   --text-small: 16px;
   --text-small--line-height: 22px;
+
+  /* Login illustration: slides in once, then zooms very slowly. Used only through
+     motion-safe:, so a device set to reduce motion shows it still. */
+  --animate-rise: rise 600ms ease-out both;
+  --animate-panel-in: panel-in 800ms ease-out both;
+  --animate-drift: drift 26s ease-in-out infinite alternate;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes drift {
+    from { transform: scale(1); }
+    to { transform: scale(1.06) translateY(-1.5%); }
+  }
 }
 
 button:focus-visible,
