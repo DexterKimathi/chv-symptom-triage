@@ -22,6 +22,11 @@ def test_health_reports_model(client):
     assert body["config_hash"]
 
 
+def test_health_answers_head_requests(client):
+    # Uptime monitors check with HEAD; it must not be refused with 405.
+    assert client.head("/health").status_code == 200
+
+
 def test_frontend_origin_is_allowed(client):
     r = client.options("/questions", headers={
         "Origin": "http://localhost:3000", "Access-Control-Request-Method": "GET",
