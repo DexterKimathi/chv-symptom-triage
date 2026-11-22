@@ -23,6 +23,11 @@ Method, fixed before the comparison was run:
     more bands away. Divergent cells are flagged for revision against source. Model v1.0 is
     not retrained here: its settings were fixed and its test set has been used.
 
+  * Separability check (methodology 1.5.1). Logistic Regression, five-fold stratified
+    cross-validation on the same DDXPlus records and the same mapped items, predicting URTI
+    against Pneumonia. It asks whether the two labels the project merges can be told apart
+    from checklist-equivalent answers alone in DDXPlus.
+
 DDXPlus is itself synthetic, built from a proprietary knowledge base for an acute-care
 setting, so agreement supports plausibility but is not real-patient validation.
 
@@ -83,6 +88,22 @@ def load_reference(mapped: dict[str, str]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def urti_pneumonia_separability(ref: pd.DataFrame, items: list[str]) -> dict:
+    """Cross-validated URTI-against-Pneumonia accuracy on the mapped DDXPlus items."""
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import accuracy_score, confusion_matrix
+    from sklearn.model_selection import StratifiedKFold, cross_val_predict
+
+    y = ref["pathology"].to_numpy()
+    folds = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    pred = cross_val_predict(LogisticRegression(max_iter=2000), ref[items].to_numpy(), y, cv=folds)
+    return {
+        "model": "Logistic Regression, 5-fold stratified cross-validation, seed 42",
+        "accuracy": round(float(accuracy_score(y, pred)), 4),
+        "confusion_matrix_rows_true_URTI_Pneumonia": confusion_matrix(y, pred, labels=PATHOLOGIES).tolist(),
+    }
+
+
 def main() -> int:
     schema = load_schema()
     config = load_config()
@@ -123,6 +144,7 @@ def main() -> int:
             "difference_generated_minus_ddxplus": round(float(answered.mean() - pooled), 4),
         })
     result = pd.DataFrame(out)
+    separability = urti_pneumonia_separability(ref, list(mapped))
 
     results = ROOT / "results"
     result.to_csv(results / "ddxplus_comparison.csv", index=False)
@@ -142,6 +164,7 @@ def main() -> int:
         "reference_age": {"median": float(ref["age"].median()),
                           "under_15_share": round(float((ref["age"] < 15).mean()), 4)},
         "reference_sex_female_share": round(float((ref["sex"] == "F").mean()), 4),
+        "urti_vs_pneumonia_separability": separability,
         "config_hash_note": "Model v1.0 and the probability table are unchanged by this comparison.",
     }
     (results / "ddxplus_comparison.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")

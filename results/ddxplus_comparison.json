@@ -29,5 +29,19 @@
     "under_15_share": 0.1907
   },
   "reference_sex_female_share": 0.5146,
+  "urti_vs_pneumonia_separability": {
+    "model": "Logistic Regression, 5-fold stratified cross-validation, seed 42",
+    "accuracy": 0.9998,
+    "confusion_matrix_rows_true_URTI_Pneumonia": [
+      [
+        64368,
+        0
+      ],
+      [
+        16,
+        25745
+      ]
+    ]
+  },
   "config_hash_note": "Model v1.0 and the probability table are unchanged by this comparison."
 }

@@ -154,9 +154,11 @@ checklist for 99.5% of them.
 training partition (URTI and Pneumonia, 90,129 records) and compares their frequencies
 with the generated respiratory records, band by band. 8 items agree, 7 are one band away
 and 3 diverge (drenching sweats, body aches, wheeze); the divergent cells are flagged for
-revision in a later version of the table. DDXPlus is itself synthetic and simulates only
-each pathology's own evidence list, so this is a plausibility check, not real-patient
-validation. Download the release files from
+revision in a later version of the table. On the same items, a cross-validated Logistic
+Regression separates DDXPlus URTI from Pneumonia with 99.98% accuracy. DDXPlus is itself
+synthetic and simulates only each pathology's own evidence list (it never gives its
+pneumonia records a sore throat, or its URTI records chills or breathlessness), so both
+results test its knowledge base, not real patients. Download the release files from
 https://doi.org/10.6084/m9.figshare.20043374 into `data/raw/ddxplus/` first.
 
 ## Acceptance thresholds
