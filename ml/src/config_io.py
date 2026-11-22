@@ -2,7 +2,7 @@
 
 Three files define everything the generator does:
 
-    config/feature_schema.csv        the 34 binary items a CHV can observe
+    config/feature_schema.csv        the 35 symptom questions a CHV can ask, plus age band and sex
     config/symptom_profiles.yaml     which items matter for each condition
     config/generator.yaml            all numeric parameters
 
