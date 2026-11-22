@@ -1,0 +1,33 @@
+{
+  "reference": "DDXPlus English release, training partition (figshare v15)",
+  "reference_file_sha256": "174ae1d56f36a15b7144838ecd214e1e1748a5369fc90c559529b6dc6ecfb218",
+  "pathologies": [
+    "URTI",
+    "Pneumonia"
+  ],
+  "reference_records": {
+    "URTI": 64368,
+    "Pneumonia": 25761
+  },
+  "generated_partition": "train",
+  "generated_records": 2796,
+  "items_compared": 18,
+  "items_without_equivalent": 17,
+  "verdicts": {
+    "agrees": 8,
+    "adjacent": 7,
+    "diverges": 3
+  },
+  "diverging_items": [
+    "drenching_sweats",
+    "body_aches",
+    "noisy_breathing_wheeze"
+  ],
+  "mean_absolute_difference": 0.1652,
+  "reference_age": {
+    "median": 36.0,
+    "under_15_share": 0.1907
+  },
+  "reference_sex_female_share": 0.5146,
+  "config_hash_note": "Model v1.0 and the probability table are unchanged by this comparison."
+}
