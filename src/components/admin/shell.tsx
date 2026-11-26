@@ -126,12 +126,6 @@ export function DashboardPage({ title, actions, children }: {
       {!data && !error && <Loading label="Loading the figures…" />}
       {data && (
         <div className={`flex flex-col gap-5 ${loading ? "opacity-60" : ""}`} aria-busy={loading}>
-          {data.sample_assessments > 0 && (
-            <p role="note" className="rounded-xl border-2 border-amber bg-amber-tint px-4 py-3 text-small">
-              <b>Includes sample data.</b> {data.sample_assessments} of {data.totals.assessments} assessments in this
-              period were made up for demonstration. They are not real patients.
-            </p>
-          )}
           {children(data)}
           <p className="text-small text-ink-soft">
             Conditions here are what the app suggested to volunteers, not confirmed diagnoses. Areas are the ones saved
