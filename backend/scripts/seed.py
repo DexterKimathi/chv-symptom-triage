@@ -169,6 +169,15 @@ def main() -> int:
     for u in DEMO_USERS:
         shown = "(set by " + PASSWORD_ENV[u["role"]] + ")" if os.environ.get(PASSWORD_ENV[u["role"]]) else u["password"]
         print(f"  {u['role']:5s}  {u['phone']}  /  {shown}")
+
+    # A host may block outside connections to its database, so the made-up demonstration
+    # data can also be switched on here, where the seed runs at every start: "add" loads it
+    # once (later starts find it there), "remove" deletes it. See scripts/sample_data.py.
+    sample = os.environ.get("SAMPLE_DATA", "").strip().lower()
+    if sample in ("add", "remove"):
+        from scripts import sample_data  # imported here: it imports this module
+        with SessionLocal() as db:
+            sample_data.add(db, seed=7) if sample == "add" else sample_data.remove(db)
     return 0
 
 

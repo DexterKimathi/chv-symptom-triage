@@ -10,6 +10,9 @@ app would actually have said.
 
 Run:  python -m scripts.sample_data            (adds the sample data once)
       python -m scripts.sample_data --remove   (deletes it, leaving everything else)
+
+On a host whose database cannot be reached from outside, set SAMPLE_DATA=add (or
+remove) on the backend instead: scripts/seed.py, run at every start, then does the same.
 """
 
 from __future__ import annotations
