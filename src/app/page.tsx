@@ -109,7 +109,7 @@ function Home() {
                     <Code className="text-small">{a.patient_ref}</Code>
                     <span className={`text-small ${urgent ? "font-bold text-red" : ""}`}>{summaryLabel(a)}</span>
                   </span>
-                  <span className="text-right text-[14px] leading-5 text-ink-soft">
+                  <span className="flex-none text-right text-small text-ink-soft">
                     {when.day}{when.time && <><br />{when.time}</>}
                   </span>
                   <span aria-hidden className="text-heading text-ink-soft">›</span>
