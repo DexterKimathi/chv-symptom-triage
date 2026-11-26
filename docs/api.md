@@ -18,6 +18,7 @@ Every endpoint except `/health` and `/auth/login` needs `Authorization: Bearer <
 | GET | `/assessments/{id}` | CHV, admin | One assessment, exactly as it was shown at the time |
 | GET | `/conditions/{id}` | CHV, admin | Description, referral level and guidance for a condition |
 | POST | `/admin/users` | admin | Create a CHV or admin account |
+| GET | `/admin/dashboard?days=28` | admin | Figures for the admin dashboard |
 
 ## POST /auth/login
 
@@ -174,3 +175,17 @@ loaded by `scripts/seed.py`.
 `phone` must be a Kenyan mobile number: `0712345678`, `254712345678` or `+254712345678`
 (spaces and hyphens are ignored). It is always stored and returned in the local form,
 `0712345678`, and login accepts any of the three spellings.
+
+## GET /admin/dashboard
+
+`days` is `7`, `28` (default) or `84`: that many Kenyan days up to and including today,
+compared with the same number of days before. Any other value is `422`; a volunteer gets `403`.
+
+Returns totals, counts by result and over time, figures for each area and volunteer, and the
+period's assessments. Each assessment is counted once: under the likely condition, or
+`unclear` (no clear match, or too close to call), or `urgent` (a danger sign). These are the
+app's suggestions, not confirmed diagnoses.
+
+An area is the one saved on the volunteer's account; no device location is collected.
+`alerts` lists area results with at least 5 cases and at least twice the earlier period,
+only for areas that had assessments in the earlier period.
