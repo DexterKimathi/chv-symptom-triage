@@ -64,7 +64,7 @@ export function ResultScreen({ id, saved }: { id: string; saved: boolean }) {
   }, [session, id, validId, guard, attempt]);
 
   const homeBar = saved
-    ? <TopBar left={<BackLink href="/" label="Home" />} right={result && <Code>{refLabel(result.patient_ref)}</Code>} />
+    ? <TopBar left={saved && session?.role === "admin" ? <BackLink href="/admin/assessments" label="Assessments" /> : <BackLink href="/" label="Home" />} right={result && <Code>{refLabel(result.patient_ref)}</Code>} />
     : <TopBar left={<TopTitle>Result</TopTitle>} right={result && <Code>{refLabel(result.patient_ref)}</Code>} />;
 
   if (!validId) {
