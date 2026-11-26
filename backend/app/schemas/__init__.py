@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from enum import IntEnum
 from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator
@@ -194,3 +195,98 @@ class UserOut(BaseModel):
     role: Role
     area: str | None
     is_active: bool
+
+
+# --- admin dashboard -------------------------------------------------------- #
+class DashboardPeriod(IntEnum):
+    week = 7
+    four_weeks = 28
+    twelve_weeks = 84
+
+
+class ConditionName(BaseModel):
+    code: str
+    name: str
+
+
+class DashboardTotals(BaseModel):
+    assessments: int
+    previous_assessments: int
+    volunteers: int
+    active_volunteers: int
+    areas: int
+
+
+class TrendBucket(BaseModel):
+    start: date
+    end: date
+    counts: dict[str, int]
+
+
+class AreaFigures(BaseModel):
+    area: str
+    volunteers: int
+    assessments: int
+    previous_assessments: int
+    counts: dict[str, int]
+    previous_counts: dict[str, int]
+
+
+class AreaAlert(BaseModel):
+    area: str
+    code: str
+    count: int
+    previous: int
+
+
+class AlertRule(BaseModel):
+    min_cases: int
+    factor: int
+
+
+class VolunteerFigures(BaseModel):
+    id: int
+    name: str
+    phone: str
+    area: str
+    is_active: bool
+    assessments: int
+    urgent: int
+    total_assessments: int
+    last_assessment_at: UtcDatetime | None
+
+
+class DashboardRecord(BaseModel):
+    id: int
+    created_at: UtcDatetime
+    patient_ref: str
+    age_band: AgeBand
+    sex: Sex
+    category: str
+    headline: str
+    referral_level: str
+    top_confidence: float
+    volunteer_id: int
+    volunteer: str
+    area: str
+
+
+class DashboardOut(BaseModel):
+    """`counts` keys are the condition codes plus "unclear" and "urgent"; each assessment
+    is counted in exactly one."""
+
+    generated_at: UtcDatetime
+    days: int
+    start: date
+    end: date
+    conditions: list[ConditionName]
+    totals: DashboardTotals
+    counts: dict[str, int]
+    previous_counts: dict[str, int]
+    trend: list[TrendBucket]
+    areas: list[AreaFigures]
+    alerts: list[AreaAlert]
+    alert_rule: AlertRule
+    volunteers: list[VolunteerFigures]
+    assessments: list[DashboardRecord]
+    sample_assessments: int

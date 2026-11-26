@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -6,8 +8,9 @@ from sqlalchemy.orm import Session
 from app.core.security import hash_password
 from app.db import get_db
 from app.deps import require_admin
-from app.models import User
-from app.schemas import CreateUserRequest, UserOut
+from app.models import Assessment, Condition, User
+from app.schemas import CreateUserRequest, DashboardOut, DashboardPeriod, UserOut
+from app.services.reporting import build_dashboard
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -33,3 +36,22 @@ def create_user(
         raise duplicate
     db.refresh(user)
     return user
+
+
+@router.get("/dashboard", response_model=DashboardOut)
+def dashboard(
+    days: DashboardPeriod = DashboardPeriod.four_weeks,
+    _: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    """Assessments, conditions, areas and volunteers for the chosen period.
+
+    Every record is read and counted here, which is enough at pilot scale. A larger
+    deployment would count in the database and page the record list."""
+    return build_dashboard(
+        assessments=db.scalars(select(Assessment)).all(),
+        users=db.scalars(select(User)).all(),
+        conditions=db.scalars(select(Condition)).all(),
+        days=int(days),
+        now=datetime.now(timezone.utc),
+    )
