@@ -59,7 +59,11 @@ and the deployed frontend URL in production. A different port counts as a differ
 | `/assess` | logged in | Patient code, age and sex, then the three danger signs (Yes or No only). After that the app asks one question at a time, each chosen by the model from the answers so far (`POST /assessments/next`), and stops once it is confident: about half of the 35 questions on average. "Answer all 35 questions instead" switches to the full checklist in seven pages of five, keeping the answers given. A danger sign answered Yes gives the urgent result straight away |
 | `/result/[id]` | logged in | The result straight after sending |
 | `/history/[id]` | logged in | A past result, read-only, exactly as first shown |
-| `/admin` | admins | Add a volunteer account |
+| `/admin` | admins | Dashboard overview: totals, likely conditions over time, areas to watch, latest assessments |
+| `/admin/areas` | admins | Each area's results as counts or shares, with its volunteers |
+| `/admin/assessments` | admins | Every assessment, with filters and CSV download |
+| `/admin/volunteers` | admins | Volunteers and their activity |
+| `/admin/volunteers/new` | admins | Add a volunteer account |
 
 Every result follows the same order: what was found, what to do (the largest block, coloured
 by referral level), supporting detail, then the disclaimer. Red is used only for urgent referral.

@@ -114,3 +114,65 @@ export const AGE_BANDS: { value: AgeBand; label: string }[] = [
   { value: "15_to_49", label: "15–49" },
   { value: "50_plus", label: "50+" },
 ];
+
+/* ---------- admin dashboard ---------- */
+
+export type DashboardDays = 7 | 28 | 84;
+
+/** Counts keyed by condition code, "unclear" and "urgent". */
+export type Counts = Record<string, number>;
+
+export interface AreaFigures {
+  area: string;
+  volunteers: number;
+  assessments: number;
+  previous_assessments: number;
+  counts: Counts;
+  previous_counts: Counts;
+}
+
+export interface VolunteerFigures {
+  id: number;
+  name: string;
+  phone: string;
+  area: string;
+  is_active: boolean;
+  assessments: number;
+  urgent: number;
+  total_assessments: number;
+  last_assessment_at: string | null;
+}
+
+export interface DashboardRecord {
+  id: number;
+  created_at: string;
+  patient_ref: string;
+  age_band: AgeBand;
+  sex: Sex;
+  /** A condition code, "unclear" or "urgent". */
+  category: string;
+  headline: string;
+  referral_level: string;
+  top_confidence: number;
+  volunteer_id: number;
+  volunteer: string;
+  area: string;
+}
+
+export interface Dashboard {
+  generated_at: string;
+  days: DashboardDays;
+  start: string;
+  end: string;
+  conditions: { code: string; name: string }[];
+  totals: { assessments: number; previous_assessments: number; volunteers: number; active_volunteers: number; areas: number };
+  counts: Counts;
+  previous_counts: Counts;
+  trend: { start: string; end: string; counts: Counts }[];
+  areas: AreaFigures[];
+  alerts: { area: string; code: string; count: number; previous: number }[];
+  alert_rule: { min_cases: number; factor: number };
+  volunteers: VolunteerFigures[];
+  assessments: DashboardRecord[];
+  sample_assessments: number;
+}

@@ -7,6 +7,8 @@ import type {
   AssessmentRequest,
   AssessmentSummary,
   CreateUserRequest,
+  Dashboard,
+  DashboardDays,
   Question,
   TokenResponse,
   User,
@@ -121,6 +123,9 @@ export const api = {
   assessments: (token: string) => request<AssessmentSummary[]>("/assessments", { token }),
 
   assessment: (token: string, id: number | string) => request<Assessment>(`/assessments/${id}`, { token }),
+
+  /** Admin only: figures for the last `days` days and the assessments behind them. */
+  dashboard: (token: string, days: DashboardDays) => request<Dashboard>(`/admin/dashboard?days=${days}`, { token }),
 
   createUser: (token: string, payload: CreateUserRequest) =>
     request<User>("/admin/users", { method: "POST", token, body: JSON.stringify(payload) }),

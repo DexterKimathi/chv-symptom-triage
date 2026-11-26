@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Alert, ButtonLink, Code, contained, ErrorNotice, OfflineBanner, PlusIcon, Spinner, TopBar, TopTitle } from "@/components/ui";
+import { Alert, Code, contained, ErrorNotice, OfflineBanner, PlusIcon, Spinner, TopBar, TopTitle } from "@/components/ui";
 import { api, NetworkError } from "@/lib/api";
 import { RequireAuth, useAuth, useSessionGuard } from "@/lib/auth";
 import { shortWhen, summaryLabel } from "@/lib/format";
@@ -19,19 +20,28 @@ function Home() {
   const [showAll, setShowAll] = useState(false);
   const [attempt, setAttempt] = useState(0);
 
+  // Administrators work from the dashboard, which has its own link to run an assessment.
+  const router = useRouter();
+  const isAdmin = session?.role === "admin";
   useEffect(() => {
-    if (!session) return;
+    if (isAdmin) router.replace("/admin");
+  }, [isAdmin, router]);
+
+  useEffect(() => {
+    if (!session || isAdmin) return;
     api.assessments(session.token)
       .then((list) => { setItems(list); setError(null); })
       .catch((e) => {
         if (guard(e)) return;
         setError(e instanceof NetworkError ? "offline" : e.message);
       });
-  }, [session, guard, attempt]);
+  }, [session, isAdmin, guard, attempt]);
 
   const retry = () => { setError(null); setAttempt((n) => n + 1); };
 
   const visible = showAll ? items : items?.slice(0, FIRST_PAGE);
+
+  if (isAdmin) return null;
 
   return (
     <>
@@ -55,7 +65,6 @@ function Home() {
               className="flex min-h-[84px] items-center gap-4 rounded-xl bg-blue px-5 text-[22px] leading-7 font-bold text-white hover:bg-blue-dark">
               <PlusIcon /> Start assessment
             </Link>
-            {session?.role === "admin" && <ButtonLink href="/admin" variant="secondary">Add volunteer</ButtonLink>}
           </div>
 
           <section className="flex flex-col">
